@@ -1,0 +1,5 @@
+// https://github.com/DefinitelyTyped/DefinitelyTyped
+// typings install dt~mongodb --save --global
+// typings install dt~mongoose --save --global
+// typings search node
+//typings install dt~node --save --global
