@@ -1,7 +1,7 @@
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
-var Event = require("./models/mongo");
+var Event = require("./models/event-schema");
 var router = express.Router();
 
 app.use(bodyParser.json());
@@ -31,7 +31,7 @@ router.route("/event")
         event.creator = req.body.creator;
         //dodanie twócy
         event.accountsConfirmed = [];
-        event.accountsConfirmed.push(req.body.creator)
+        event.accountsConfirmed.push(req.body.creator);
 
         event.save(function (err) {
             var response = {};
@@ -135,8 +135,12 @@ router.route("/event/:id/account/:name")
                     data.accountsRejected = [];
                 }
 
-                if (data.accountsRejected.indexOf(req.params.name) != -1) {
-                    data.accountsRejected.splice(data.accountsRejected.indexOf(req.params.name), 1)
+                if (data.accountsConfirmed.indexOf(req.params.name) != -1) {
+                    data.accountsConfirmed.splice(data.accountsConfirmed.indexOf(req.params.name), 1)
+                }
+
+                if (data.accountsRejected.indexOf(req.params.name) == -1) {
+                    data.accountsRejected.push(req.params.name)
                 }
 
                 data.save(function (err) {
