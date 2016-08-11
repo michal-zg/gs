@@ -1,7 +1,6 @@
 import mongoose = require("mongoose");
 import IEvent = require("./IEvent");
 
-var mongoose = require("mongoose");
 
 mongoose.connect('mongodb://localhost:27017/game-scheduler');
 
