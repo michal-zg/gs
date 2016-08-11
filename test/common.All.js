@@ -1,31 +1,110 @@
-// load Unit.js module
 var test = require('unit.js');
 
-describe('Learning by the example', function () {
+var commons = require('../common.js');
 
-    it('splice existing', function () {
-        var bla = ["b", "a", "d"];
-
-        test.when('array splice', function () {
-                bla.splice(bla.indexOf("a"), 1)
-            })
-            .then('test the "example" object', function () {
-                test
-                    .array(bla)
-                    .is(["b", "d"]);
-            })
+describe('sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow', function () {
+    it('string za krotki', function () {
+        var ok;
+        test.when(function () {
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow('dupa', 6);
+        }).then('', function () {
+            test.bool(ok).isFalse();
+        });
     });
 
-    it('splice NOT existing', function () {
-        var bla = ["b", "a", "d"];
 
-        test.when('array splice', function () {
-                bla.splice(bla.indexOf("AA"), 1)
-            })
-            .then('test the "example" object', function () {
-                test
-                    .array(bla)
-                    .is(["b", "a", "d"]);
-            })
+    it('undefined', function () {
+        var ok;
+
+        test.when(function () {
+            var dupa;
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow(dupa, 6);
+        }).then('', function () {
+            test.bool(ok).isFalse();
+        });
+    });
+
+    it('null', function () {
+        var ok;
+
+        test.when(function () {
+            var dupa = null;
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow(dupa, 6);
+        }).then('', function () {
+            test.bool(ok).isFalse();
+        });
+    });
+
+    it('typeof string', function () {
+        var ok;
+
+        test.when(function () {
+            var dupa = 4576;
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow(dupa, 2);
+        }).then('', function () {
+            test.bool(ok).isFalse();
+        });
+    });
+    it('string rownej dlugosci min', function () {
+        var ok;
+        test.when(function () {
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow('dupa', 4);
+        }).then('', function () {
+            test.bool(ok).isTrue();
+        });
+    });
+
+    it('string > dlugosc min', function () {
+        var ok;
+        test.when(function () {
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow('dupapa', 4);
+        }).then('', function () {
+            test.bool(ok).isTrue();
+        });
+    });
+
+    it('string ze znakiem specjalnym', function () {
+        var ok;
+        test.when(function () {
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow('dupa-', 4);
+        }).then('', function () {
+            test.bool(ok).isFalse();
+        });
+    });
+
+    it('jedna spacja', function () {
+        var ok;
+        test.when(function () {
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow(' ', 1);
+        }).then('', function () {
+            test.bool(ok).isFalse();
+        });
+    });
+
+    it('dwie spacje', function () {
+        var ok;
+        test.when(function () {
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow('  ', 2);
+        }).then('', function () {
+            test.bool(ok).isFalse();
+        });
+    });
+
+    it('duże litery', function () {
+        var ok;
+        test.when(function () {
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow('DUPA', 4);
+        }).then('', function () {
+            test.bool(ok).isTrue();
+        });
+    });
+
+    it('duże litery i cyfry', function () {
+        var ok;
+        test.when(function () {
+            ok = commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow('Dupa13', 3);
+        }).then('', function () {
+            test.bool(ok).isTrue();
+        });
     });
 });

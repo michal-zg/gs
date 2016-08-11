@@ -3,6 +3,7 @@ var app = express();
 var bodyParser = require("body-parser");
 var Event = require("./models/event-schema");
 var router = express.Router();
+var commons =  require("./common.js");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended": false}));
@@ -10,6 +11,7 @@ app.use(bodyParser.urlencoded({"extended": false}));
 router.get("/", function (req, res) {
     res.json({"error": false, "message": "Hello World"});
 });
+
 
 router.route("/event")
     .get(function (req, res) {
@@ -29,19 +31,28 @@ router.route("/event")
         var event = new Event();
         event.name = req.body.name;
         event.creator = req.body.creator;
-        //dodanie twócy
-        event.accountsConfirmed = [];
-        event.accountsConfirmed.push(req.body.creator);
 
-        event.save(function (err) {
-            var response = {};
-            if (err) {
-                response = {"error": true, "message": "Error adding data" + err};
-            } else {
-                response = {"error": false, "message": "Event added"};
-            }
+        //dodanie twócy
+        if (commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow(req.body.name, 3) && commons.sprawdzenieCzyStringNiepustyIDluzszyOdIZDozwolonychZnakow(req.body.creator, 6)
+        ) {
+            event.accountsConfirmed = [];
+            event.accountsConfirmed.push(req.body.creator);
+
+            event.save(function (err) {
+                var response = {};
+                if (err) {
+                    response = {"error": true, "message": "Error adding data" + err};
+                } else {
+                    response = {"error": false, "message": "Event added"};
+                }
+                res.json(response);
+            });
+        }
+        else {
+
+            var response = {"error": true, "message": " Nie podano nazwy"};
             res.json(response);
-        });
+        }
     });
 
 router.route("/event/:id")
@@ -69,7 +80,9 @@ router.route("/event/:id")
                 // change it accordingly.
                 if (req.body.name !== undefined) {
                     // case where email needs to be updated.
-                    data.name = req.body.name;
+
+                
+                    name = req.body.name;
                 }
 
                 data.save(function (err) {
