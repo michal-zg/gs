@@ -98,15 +98,25 @@ router.route("/event/:id/status")
         var response = {};
 
         Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
+                var zmianaStatusuDozwolona = req.body.creator !== undefined && data.creator === req.body.creator;
+                var podanyStatus = req.body.status !== undefined;
+                if (zmianaStatusuDozwolona && podanyStatus) {
 
-                if (req.body.status !== undefined) {
                     data.status = req.body.status;
+                    data.save((err)=> handleMongoError(res, err, "Data is updated for " + req.params.id));
                 }
-
-                data.save((err)=> handleMongoError(res, err, "Data is updated for " + req.params.id));
+                else {
+                    res.json({
+                        "error": true,
+                        "message": "Status change is only possible for event creator and requires status to be given."
+                    });
+                }
             }
-        ));
-    });
+            )
+        )
+        ;
+    })
+;
 
 
 router.route("/event/:id/account/:name")
