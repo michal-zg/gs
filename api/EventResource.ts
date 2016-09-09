@@ -1,4 +1,6 @@
 import express = require("express");
+import {Error} from "mongoose";
+import {Response} from "express";
 var HttpStatus = require('http-status-codes');
 
 import Event = require("../models/Event");
@@ -24,29 +26,47 @@ function moveBeetweenArrays(element:string, arrayToAddTo:string[], arrayToRemove
 }
 
 function handleMongoError(res:ServerResponse, err:any, message:string):void {
-    let response:{};
-    let status:number = HttpStatus.OK;
+    handleMongoError(res, err, message, null);
+}
+
+function handleMongoError(res:ServerResponse, err:any, responseReturnDataCallback:() => any):void {
+    let response;
+    let status:number = 200;
 
     if (err) {
-        response = {"error": true, "message": "Error fetching data" + err};
-        status = HttpStatus.NOT_FOUND_ERR;
+        let message;
+        status = 400;
+        if (err instanceof Error) {
+            //mongoose validation error
+            message = err;
+            status = 400;
+        } else {
+            message = err;
+        }
+        response = {"error": true, "message": "Error fetching data " + message};
+
     } else {
-        response = {"error": false, "message": message};
+        if (responseReturnDataCallback == null) {
+            response = {"error": false, message: message};
+        } else {
+            response = responseReturnDataCallback();
+        }
+
     }
     res.status(status).json(response);
 }
 
 function handle(req:IncomingMessage, res:ServerResponse, err, data, successHandler):void {
     let response:{};
-    let status:number = HttpStatus.OK;
+    let status:number = 200;
     if (err) {
         response = {"error": true, "message": "Error fetching data" + err};
     } else {
         response = successHandler(data);
     }
-    res.json(response);
+    res.status(status).json(response);
 }
-router.route("/event")
+router.route("/events")
     .get((req, res) => {
 
         Event.find({}, (err, data) => handle(req, res, err, data, (data) => {
@@ -62,10 +82,10 @@ router.route("/event")
         event.accountsConfirmed = [];
         event.accountsConfirmed.push(req.body.creator);
 
-        event.save((err)=> handleMongoError(res, err, 'Event added'));
+        event.save(((err)=> handleMongoError(res, err, () => event)));
     });
 
-router.route("/event/:id")
+router.route("/events/:id")
     .get((req, res) => {
 
         Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
@@ -87,7 +107,7 @@ router.route("/event/:id")
         }));
     });
 
-router.route("/event/:id/status")
+router.route("/events/:id/status")
     .get(function (req, res) {
 
         Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
@@ -95,7 +115,6 @@ router.route("/event/:id/status")
         }));
     })
     .put(function (req, res) {
-        var response = {};
 
         Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
                 var zmianaStatusuDozwolona = req.body.creator !== undefined && data.creator === req.body.creator;
@@ -119,9 +138,8 @@ router.route("/event/:id/status")
 ;
 
 
-router.route("/event/:id/account/:name")
+router.route("/events/:id/account/:name")
     .delete(function (req, res) {
-        var response = {};
 
         Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
             //usunięcie z listy jeśli na niej jest
