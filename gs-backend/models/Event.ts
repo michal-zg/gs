@@ -1,7 +1,7 @@
 import mongoose = require("mongoose");
 import IEvent = require("./IEvent");
 
-const mongoDbIp = '192.168.1.102';
+const mongoDbIp = 'localhost';
 mongoose.connect('mongodb://'+mongoDbIp+':27017/game-scheduler');
 
 interface IEvenModel extends IEvent, mongoose.Document {
