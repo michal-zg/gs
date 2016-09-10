@@ -15,7 +15,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:calendarViewShown="false"
         android:datePickerMode="spinner"
         android:nestedScrollingEnabled="false"
@@ -25,24 +24,22 @@
         android:id="@+id/timePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/datePicker"
-        android:layout_centerHorizontal="true"
+        android:layout_toLeftOf="@+id/datePicker"
         android:timePickerMode="spinner" />
 
     <Button
         android:id="@+id/add_ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_below="@+id/timePicker"
+        android:layout_alignParentLeft="true"
         android:text="ok" />
 
     <Button
         android:id="@+id/add_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="false"
-        android:layout_below="@+id/timePicker"
+        android:layout_alignRight="@id/add_ok"
         android:text="anuluj" />
 
 

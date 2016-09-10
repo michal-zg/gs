@@ -54,6 +54,11 @@ public class GameSchedulerApplication extends Application {
         return retrofit.create(RestApi.class);
     }
 
+    public String getUserName(){
+        //TODO: pobierać
+        return "jacek";
+    }
+
     public static GameSchedulerApplication getInstance() {
         return INSTANCE;
     }

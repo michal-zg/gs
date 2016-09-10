@@ -1,9 +1,9 @@
 package com.example.jacek.myapplication.data;
 
-import java.util.ArrayList;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by jacek on 2016-04-09.
@@ -17,7 +17,7 @@ public class Event {
         this.creator = creator;
         this.name = name;
     }
-
+    @SerializedName("_id")
     public String id;
     public String creator;
     public String name;

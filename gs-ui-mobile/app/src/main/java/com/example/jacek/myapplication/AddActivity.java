@@ -42,7 +42,7 @@ public class AddActivity extends AppCompatActivity {
     public void onAdd(final View v) {
 
 
-        Event event = new Event("planszówki", "jacek");
+        Event event = new Event( "jacek","planszówki");
 
         GameSchedulerApplication.getInstance().getRestApi().addEvent(event).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Event>() {
             @Override
@@ -59,6 +59,7 @@ public class AddActivity extends AppCompatActivity {
 
             @Override
             public void onNext(Event integer) {
+
                 finish();
             }
         });

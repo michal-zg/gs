@@ -3,8 +3,10 @@ package com.example.jacek.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,9 +17,13 @@ import android.widget.ListView;
 import com.example.jacek.myapplication.data.Event;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.listViewEvents)
     ListView listViewEvents;
+
+    ArrayAdapter listViewEventsAdapter;
 
 //    @OnItemClick(R.id.listViewEvents) void onItemClick(int position) {
 //        Toast.makeText(this, "You clicked: " + adapter.getItem(position), LENGTH_SHORT).show();
@@ -63,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ArrayAdapter adapter = new ArrayAdapter<Event>(this, R.layout.list_events_row, new ArrayList<Event>()) {
+        listViewEventsAdapter = new ArrayAdapter<Event>(MainActivity.this, R.layout.list_events_row, new ArrayList<Event>()) {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -75,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     tli = (EventItemLayout) convertView;
                 }
 
+                tli.setData(getItem(position));
 //                tli.setData(mTasks.get(position));
 
 
@@ -82,11 +91,36 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        listViewEvents.setAdapter(adapter);
+        listViewEvents.setAdapter(listViewEventsAdapter);
+
+
+
+
     }
 
     @Override
     protected void onResume() {
+
+        GameSchedulerApplication.getInstance().getRestApi().getEvents().subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Event>>() {
+            @Override
+            public void onCompleted() {
+                Snackbar.make(listViewEvents, "Pobrano", Snackbar.LENGTH_LONG)
+                        .setAction("Pobrano", null).show();
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(this.getClass().getName(), "Błąd.", e);
+            }
+
+            @Override
+            public void onNext(List<Event> listData) {
+                listViewEventsAdapter.clear();
+                listViewEventsAdapter.addAll(listData);
+
+            }
+        });
 
         runOnUiThread(new Runnable() {
             @Override

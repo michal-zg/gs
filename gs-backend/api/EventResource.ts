@@ -70,7 +70,7 @@ router.route("/events")
     .get((req, res) => {
 
         Event.find({}, (err, data) => handle(req, res, err, data, (data) => {
-            return {"error": false, "message": data};
+            return data;
         }));
     })
     .post((req, res)=> {
