@@ -1,3 +1,4 @@
+"use strict";
 var mongoose = require("mongoose");
 var mongoDbIp = 'localhost';
 mongoose.connect('mongodb://' + mongoDbIp + ':27017/game-scheduler');
