@@ -6,10 +6,11 @@
     "start": "node ./main.js"
   },
   "dependencies": {
+    "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "debug": "~2.2.0",
     "express": "^4.14.0",
     "http-status-codes": "^1.0.6",
-    "mongoose": "^4.5.5"
+    "mongoose": "^4.5.5",
   }
 }

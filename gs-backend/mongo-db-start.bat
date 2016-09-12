@@ -1,3 +1,3 @@
-call d:\MongoDB\Server\3.2\bin\mongod --dbpath ./mongodb/data
+call d:\mongodb-win32-x86_64-2.0.6\bin\mongod --dbpath ./mongodb/data
 
 pause;
