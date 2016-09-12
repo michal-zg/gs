@@ -2,6 +2,8 @@ package com.example.jacek.myapplication.data;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.joda.time.DateTime;
+
 import java.util.Date;
 import java.util.List;
 
@@ -10,18 +12,19 @@ import java.util.List;
  */
 public class Event {
 
-    public Event(){
+    public Event() {
     }
 
     public Event(String creator, String name) {
         this.creator = creator;
         this.name = name;
     }
+
     @SerializedName("_id")
     public String id;
     public String creator;
     public String name;
-    public Date date;
+    public DateTime date;
 
     public List<String> accountsRejected;
     public List<String> accountsConfirmed;
@@ -59,32 +62,4 @@ public class Event {
         return result;
     }
 
-//    public String host;
-    //    public boolean open;
-//
-//    public Date date;
-//
-//    public List<Account> accountsConfirmed = new ArrayList<>();
-//    public List<Account> accountsRejected = new ArrayList<>();
-//
-//    public String name;
-
-//
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        Event event = (Event) o;
-//        return open == event.open &&
-//                Objects.equals(host, event.host) &&
-//                Objects.equals(date, event.date) &&
-//                Objects.equals(accountsConfirmed, event.accountsConfirmed) &&
-//                Objects.equals(accountsRejected, event.accountsRejected) &&
-//                Objects.equals(name, event.name);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(host, open, date, accountsConfirmed, accountsRejected, name);
-//    }
 }

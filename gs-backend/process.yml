@@ -1,0 +1,14 @@
+apps:
+  - script : ./main.js
+    exec_mode: fork
+    name     : 'rest-api'
+    instances: 1
+#    watch  : true - z uruchomionym intelij idea (widocznie wykonuje ~touch na plikach) powoduje ciągłe restarty
+    env_test-jacek:
+      NODE_ENV: development
+      port: 3000
+      mongodb: 'mongodb://localhost:27017/game-scheduler'
+    env_production:
+      NODE_ENV: production
+      port: 3000
+      mongodb: 'mongodb://localhost:27017/game-scheduler'
