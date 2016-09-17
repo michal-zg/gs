@@ -1,9 +1,13 @@
 package com.example.jacek.myapplication;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.jacek.myapplication.data.Event;
+import com.example.jacek.myapplication.data.Notification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     ListView listViewEvents;
 
     ArrayAdapter listViewEventsAdapter;
+    private BroadcastReceiverNotification receiverNotification;
 
 //    @OnItemClick(R.id.listViewEvents) void onItemClick(int position) {
 //        Toast.makeText(this, "You clicked: " + adapter.getItem(position), LENGTH_SHORT).show();
@@ -94,8 +100,25 @@ public class MainActivity extends AppCompatActivity {
         listViewEvents.setAdapter(listViewEventsAdapter);
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
 
+        receiverNotification = new BroadcastReceiverNotification();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverNotification, NotificationPullService.getBroadcastIntentFilter());
+        NotificationPullService.start(this);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverNotification);
     }
 
     @Override
@@ -133,6 +156,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -147,5 +175,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class BroadcastReceiverNotification extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Notification notification = (Notification) intent.getSerializableExtra(NotificationPullService.NOTIFICATION_DATA);
+
+            android.app.Notification noti = new android.app.Notification.Builder(MainActivity.this
+            )
+                    .setContentTitle("Planszówki: " + notification.getMessage())
+                    .setContentText(notification.getSubject())
+                    .setSmallIcon(R.drawable.icon_notification_small)
+                    .build();
+        }
     }
 }

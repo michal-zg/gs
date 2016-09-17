@@ -89,7 +89,7 @@ router.route("/")
         event.save(((err)=> handleMongoErrorDataCallback(res, err, () => event)));
     });
 
-router.route(":id")
+router.route("/:id")
     .get((req, res) => {
 
         Model.Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
@@ -111,7 +111,7 @@ router.route(":id")
         }));
     });
 
-router.route(":id/status")
+router.route("/:id/status")
     .get(function (req, res) {
 
         Model.Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
@@ -142,28 +142,47 @@ router.route(":id/status")
 ;
 
 
-router.route(":id/account/:name")
+router.route("/:id/account/:name")
     .delete(function (req, res) {
 
-        Model.Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
+        Model.Event.findById(req.params.id).then(data => {
             //usunięcie z listy jeśli na niej jest
             data.accountsRejected = moveBeetweenArrays(req.params.name, data.accountsRejected, data.accountsConfirmed);
 
-            data.save((err)=> handleMongoErrorMessage(res, err, {"name": req.params.name}.toString()));
+            return data.save();
+        }).then(data => {
+
+            var notification = new Model.Notification();
+            notification.subject = req.params.name + ' nie przybędzie ' + data.date + ' .';
+            notification.message = req.params.name + ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date + '.';
+            notification.save();
+//TODO: nie pokazywac userowi ktory jest zrodlem notyfikacji
+            return data;
+        }).then(data => res.status(200).json({"name": req.params.name})).catch(error => res.status(400).json({
+            "error": true,
+            "message": "Error fetching data " + error
         }));
+
     })
     .post(function (req, res) {
 
-        Model.Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
-            if (data != null) {
-                data.accountsConfirmed = moveBeetweenArrays(req.params.name, data.accountsConfirmed, data.accountsRejected);
 
-                data.save((err)=> handleMongoErrorMessage(res, err, {"name": req.params.name}.toString()));
-            } else {
-                res.status(404).json({"error": true, "message": "No data with id " + req.params.id});
+        Model.Event.findById(req.params.id).then(data => {
+
+                if (data != null) {
+                    data.accountsConfirmed = moveBeetweenArrays(req.params.name, data.accountsConfirmed, data.accountsRejected);
+
+                    data.save().then(() => res.status(200).json(data)).catch(error => res.status(200).json({"name": req.params.name}));
+                } else {
+                    res.status(404).json({"error": true, "message": "No data with id " + req.params.id});
+                }
+
             }
-
+        ).catch(error => res.status(400).json({
+            "error": true,
+            "message": "Error fetching data " + error
         }));
+
     });
 
 export = router;

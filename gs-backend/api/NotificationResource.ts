@@ -9,19 +9,25 @@ var Model = require("./../models/Schema");
 
 let router = express.Router();
 
-router.route("/")
-    .get((req, res) => {
-
-        Model.Notification.find({}).where('date').gt(req.body.datetime).then(data => res.status(200).json(data)).catch(error => res.status(400).json({
-            "error": true,
-            "message": "Error fetching data " + error
-        }));
-    });
-
 router.route("/last")
     .get((req, res) => {
 
-        Model.Notification.find({}).then(data => res.status(200).json(data)).catch(error => res.status(400).json({
+        Model.Notification.findOne({}).//najpóźniejsza data
+        sort({date: -1}).then(data => res.status(200).json(data)).catch(error => res.status(400).json({
+            "error": true,
+            "message": "Error fetching data " + error
+        }));
+
+
+    });
+
+router.route("/:date")
+    .get((req, res) => {
+
+        Model.Notification.find({}).where('date').gt(req.params.date).then(data => {
+            console.log(req.params.date + '  '+ new Date(data));
+            res.status(200).json(data);
+        }).catch(error => res.status(400).json({
             "error": true,
             "message": "Error fetching data " + error
         }));
