@@ -1,9 +1,8 @@
-package com.example.jacek.myapplication;
+package pl.jw.android.gamescheduler;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,14 +17,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.jacek.myapplication.data.Event;
-import com.example.jacek.myapplication.data.Notification;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import pl.jw.android.gamescheduler.data.Event;
+import pl.jw.android.gamescheduler.data.Notification;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -69,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).notificationShow();
-
                 Intent intent = new Intent(MainActivity.this, AddActivity.class);
                 MainActivity.this.startActivity(intent);
             }
@@ -183,8 +178,8 @@ public class MainActivity extends AppCompatActivity {
             //TODO: nie pokazywac userowi ktory jest zrodlem notyfikacji
 
             android.app.Notification.Builder noti = new android.app.Notification.Builder(MainActivity.this)
-                    .setContentTitle("Planszówki: " + notification.getMessage())
-                    .setContentText(notification.getSubject());
+                    .setContentTitle(notification.getSubject())
+                    .setContentText(notification.getMessage());
 
             GameSchedulerApplication.getInstance().notificationShow(context, noti);
         }

@@ -1,4 +1,4 @@
-package com.example.jacek.myapplication.data;
+package pl.jw.android.gamescheduler.data;
 
 /**
  * Created by jacek on 2016-09-17.

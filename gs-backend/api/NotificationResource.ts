@@ -17,8 +17,6 @@ router.route("/last")
             "error": true,
             "message": "Error fetching data " + error
         }));
-
-
     });
 
 router.route("/:date")

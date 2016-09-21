@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="action_settings">Settings</string>
+    <string name="event_name_default">planszówki</string>
+    <string name="event_select_date_time">wybierz datę i czas</string>
+    <string name="button_cancel">anuluj</string>
+    <string name="button_ok">ok</string>
+    <string name="event_name_hint">Nazwa:</string>
+    <string name="event_date_time_label">Data i czas:</string>
+    <string name="event_vote_yes">będę</string>
+    <string name="event_vote_no">niepasuje</string>
 </resources>

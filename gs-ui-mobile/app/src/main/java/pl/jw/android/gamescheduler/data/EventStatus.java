@@ -1,4 +1,4 @@
-package com.example.jacek.myapplication.data;
+package pl.jw.android.gamescheduler.data;
 
 import com.google.gson.annotations.SerializedName;
 

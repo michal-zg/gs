@@ -1,7 +1,8 @@
-package com.example.jacek.myapplication;
+package pl.jw.android.gamescheduler;
 
 import android.app.Notification;
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -10,18 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.jacek.myapplication.data.DataMock;
-import com.example.jacek.myapplication.data.Event;
-import com.example.jacek.myapplication.data.User;
-
-import org.joda.time.DateTime;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pl.jw.android.gamescheduler.data.Event;
+import pl.jw.android.gamescheduler.data.User;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -29,20 +25,21 @@ import rx.schedulers.Schedulers;
  */
 public class EventItemLayout extends LinearLayout {
 
+    @Bind(R.id.eventEditTextLabelName)
+    TextView editTextLabelName;
     @Bind(R.id.eventEditTextLabelDateTime)
     TextView editTextLabelDateTime;
+
     @Bind(R.id.eventTextViewLabelConfirmed)
     TextView textViewLabelConfirmed;
     @Bind(R.id.eventListViewConfirmed)
     ListView listViewConfirmed;
+
     @Bind(R.id.eventTextViewLabelRejected)
     TextView textViewLabelRejected;
     @Bind(R.id.eventListViewRejected)
     ListView listViewRejected;
-    //    @Bind(R.id.eventTextViewLabelAnswerMissing)
-//    TextView textViewLabelAnswerMissing;
-//    @Bind(R.id.eventListViewAnswerMissing)
-//    ListView listViewViewLabelAnswerMissing;
+
     @Bind(R.id.eventButtonConfirm)
     Button buttonConfirm;
     @Bind(R.id.eventButtonReject)
@@ -56,9 +53,16 @@ public class EventItemLayout extends LinearLayout {
 
     public void setData(Event data) {
         this.data = data;
+
+
+        //TODO: organiztor, odswiezanie po zmianie
+        editTextLabelName.setText(data.name);
+
+        String dateTimeFormatted = DateUtils.formatDateTime(getContext(), data.date.getMillis(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
+        editTextLabelDateTime.setText(dateTimeFormatted);
+
         listViewConfirmed.setAdapter(new ArrayAdapter<>(getContext(), R.layout.list_accounts_row, R.id.accountName, data.accountsConfirmed));
         listViewRejected.setAdapter(new ArrayAdapter<>(getContext(), R.layout.list_accounts_row, R.id.accountName, data.accountsRejected));
-        //listViewViewLabelAnswerMissing.setAdapter(new ArrayAdapter<>(getContext(), R.layout.list_accounts_row, R.id.accountName, DataMock.getAccountsMissing()));
 
         String userName = GameSchedulerApplication.getInstance().getUserName();
         boolean confirmed = data.accountsConfirmed.contains(userName);
@@ -102,7 +106,7 @@ public class EventItemLayout extends LinearLayout {
             }
 
             @Override
-                public void onNext(User user) {
+            public void onNext(User user) {
                 Notification.Builder noti = new Notification.Builder(EventItemLayout.this.getContext())
                         .setContentTitle("Potwierdziłeś obecność")
                         .setContentText("Data rozgrywki: " + data.date);

@@ -1,12 +1,9 @@
-package com.example.jacek.myapplication.rest;
+package pl.jw.android.gamescheduler.rest;
 
-import com.example.jacek.myapplication.data.Event;
-import com.example.jacek.myapplication.data.Notification;
-import com.example.jacek.myapplication.data.User;
+import pl.jw.android.gamescheduler.data.Event;
+import pl.jw.android.gamescheduler.data.Notification;
+import pl.jw.android.gamescheduler.data.User;
 
-import org.joda.time.DateTime;
-
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.http.Body;
@@ -22,7 +19,7 @@ import rx.Observable;
 public interface RestApi {
 
     @POST("events")
-    Observable<Event> addEvent(@Body Event data);
+    Observable<String> addEvent(@Body Event data);
 
     @GET("events")
     Observable<List<Event>> getEvents();

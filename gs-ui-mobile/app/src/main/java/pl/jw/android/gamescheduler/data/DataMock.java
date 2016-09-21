@@ -1,4 +1,4 @@
-package com.example.jacek.myapplication.data;
+package pl.jw.android.gamescheduler.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;

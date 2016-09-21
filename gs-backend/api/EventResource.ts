@@ -8,10 +8,11 @@ import IEvent = require("../models/IEvent");
 
 let router = express.Router();
 
+//TODO: notyfikacje do innych zdarzeń
 function notificationSave(name:string, event:IEvent, subject:string, message:string) {
     var notification = new Model.Notification();
-    notification.subject = name + subject + ' .';
-    notification.message = name + message + ' .';
+    notification.subject = name + subject + '.';
+    notification.message = message + '.';
     notification.event = event;
     notification.save();
 }
@@ -95,7 +96,11 @@ router.route("/")
         event.accountsConfirmed = [];
         event.accountsConfirmed.push(req.body.creator);
 
-        event.save(((err)=> handleMongoErrorDataCallback(res, err, () => event)));
+        //TODO: zaciagany zabawny losowy tekscik uzasadniajacy - twitter?
+        event.save()
+            .then(() => res.status(201).json(event._id))
+            .catch(error => res.status(500).json({"name": req.params.name}))
+            .then(() => notificationSave(event.creator, event, ' dodał ' + event.name, 'Data: ' + event.date + '\n' + 'Określ się w miarę szybko. Od tego zależy istnienei wszechświata.'));
     });
 
 router.route("/:id")
@@ -161,7 +166,7 @@ router.route("/:id/account/:name")
             return data.save();
         }).then(data => {
 
-            notificationSave(req.params.name, data, ' nie przybędzie ' + data.date, ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date);
+            notificationSave(req.params.name, data, ' nie przybędzie ' + data.date, req.params.name + ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date);
 
             return data;
         }).then(data => res.status(200).json({"name": req.params.name})).catch(error => res.status(400).json({
@@ -177,10 +182,9 @@ router.route("/:id/account/:name")
                 if (data != null) {
                     data.accountsConfirmed = moveBeetweenArrays(req.params.name, data.accountsConfirmed, data.accountsRejected);
 
-                    notificationSave(req.params.name, data, ' przybędzie ' + data.date, ' będzie na: ' + data.name + ' dnia: ' + data.date);
+                    notificationSave(req.params.name, data, ' przybędzie ' + data.date, req.params.name + ' będzie na: ' + data.name + ' dnia: ' + data.date);
 
-
-                    data.save().then(() => res.status(200).json(data)).catch(error => res.status(200).json({"name": req.params.name}));
+                    data.save().then(() => res.status(201).json(req.params.name)).catch(error => res.status(500).json({"name": req.params.name}));
                 } else {
                     res.status(404).json({"error": true, "message": "No data with id " + req.params.id});
                 }

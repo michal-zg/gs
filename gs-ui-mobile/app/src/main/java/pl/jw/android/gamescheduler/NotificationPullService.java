@@ -1,28 +1,27 @@
-package com.example.jacek.myapplication;
+package pl.jw.android.gamescheduler;
 
 import android.app.IntentService;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.example.jacek.myapplication.data.Notification;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.List;
 
+import pl.jw.android.gamescheduler.data.Notification;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-import static com.example.jacek.myapplication.GameSchedulerApplication.NOTIFICATION_LAST_DATETIME;
+import static pl.jw.android.gamescheduler.GameSchedulerApplication.NOTIFICATION_LAST_DATETIME;
 
 /**
  * TODO:
@@ -46,7 +45,7 @@ public class NotificationPullService extends IntentService {
     public static final String TAG = NotificationPullService.class.getName();
 
     public static final String NOTIFICATION_RECEIVED = "NOTIFICATION_RECEIVED";
-    private static final String ACTION_PULL = "com.example.jacek.myapplication.action.notification.pull";
+    private static final String ACTION_PULL = "pl.jw.android.gamescheduler.action.notification.pull";
     public static final String NOTIFICATION_DATA = "NOTIFICATION_DATA";
 
 
@@ -77,7 +76,7 @@ public class NotificationPullService extends IntentService {
             public Boolean call(Notification lastNotificationOnBackend) {
                 boolean anyNotificationsOnBackend = lastNotificationOnBackend != null;
 
-                Log.d(TAG, "Notification service - any on backend: " + anyNotificationsOnBackend + " last from date: " + lastNotificationOnBackend.getDate() + ".");
+                Log.d(TAG, "Notification service - any on backend: " + anyNotificationsOnBackend + " last from date: " + (anyNotificationsOnBackend ? lastNotificationOnBackend.getDate() : "") + ".");
 
                 return anyNotificationsOnBackend;
             }

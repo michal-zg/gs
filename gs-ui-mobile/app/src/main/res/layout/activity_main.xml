@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.jacek.myapplication.MainActivity">
+    tools:context="pl.jw.android.gamescheduler.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -31,11 +31,5 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_menu_add" />
 
-    <ListView
-        android:id="@+id/listViewEvents"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:choiceMode="singleChoice"
-        android:visibility="visible" />
 
 </android.support.design.widget.CoordinatorLayout>

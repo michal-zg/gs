@@ -1,10 +1,9 @@
-package com.example.jacek.myapplication.data;
+package pl.jw.android.gamescheduler.data;
 
 import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
 
-import java.util.Date;
 import java.util.List;
 
 /**

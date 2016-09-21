@@ -1,4 +1,4 @@
-package com.example.jacek.myapplication;
+package pl.jw.android.gamescheduler;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -10,8 +10,9 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import com.example.jacek.myapplication.rest.RestApi;
-import com.example.jacek.myapplication.util.GsonConverters;
+import pl.jw.android.gamescheduler.rest.RestApi;
+import pl.jw.android.gamescheduler.util.GsonConverters;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -20,6 +21,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 import okhttp3.OkHttpClient;
@@ -44,7 +46,6 @@ public class GameSchedulerApplication extends Application {
     private static GameSchedulerApplication INSTANCE;
 
     private Properties properties = new Properties();
-
 
     @Override
     public void onCreate() {
@@ -119,5 +120,9 @@ public class GameSchedulerApplication extends Application {
 
     public static GameSchedulerApplication getInstance() {
         return INSTANCE;
+    }
+
+    public static Locale getLocale(Context context) {
+        return context.getResources().getConfiguration().locale;
     }
 }

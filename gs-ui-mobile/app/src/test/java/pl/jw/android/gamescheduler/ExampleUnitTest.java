@@ -1,4 +1,4 @@
-package com.example.jacek.myapplication;
+package pl.jw.android.gamescheduler;
 
 import org.junit.Test;
 
