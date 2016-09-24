@@ -169,7 +169,7 @@ router.route("/:id/account/:name")
             notificationSave(req.params.name, data, ' nie przybędzie ' + data.date, req.params.name + ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date);
 
             return data;
-        }).then(data => res.status(200).json({"name": req.params.name})).catch(error => res.status(400).json({
+        }).then(data => res.status(200).json(/*{"name": req.params.name}*/data)).catch(error => res.status(400).json({
             "error": true,
             "message": "Error fetching data " + error
         }));
@@ -184,7 +184,7 @@ router.route("/:id/account/:name")
 
                     notificationSave(req.params.name, data, ' przybędzie ' + data.date, req.params.name + ' będzie na: ' + data.name + ' dnia: ' + data.date);
 
-                    data.save().then(() => res.status(201).json(req.params.name)).catch(error => res.status(500).json({"name": req.params.name}));
+                    data.save().then((data) => res.status(201).json(data/*req.params.name*/)).catch(error => res.status(500).json({"name": req.params.name}));
                 } else {
                     res.status(404).json({"error": true, "message": "No data with id " + req.params.id});
                 }

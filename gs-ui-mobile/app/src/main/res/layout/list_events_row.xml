@@ -14,53 +14,79 @@
 
 
         <TextView
-            android:id="@+id/eventEditTextLabelDateTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true" />
-        <!--android:inputType="datetime"-->
-
-        <TextView
             android:id="@+id/eventEditTextLabelName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+
+        <TextView
+            android:id="@+id/eventEditTextLabelDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true" />
-        <!--android:inputType="datetime"-->
 
-        <TextView
-            android:id="@+id/eventTextViewLabelConfirmed"
-            android:layout_width="wrap_content"
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/listLabels"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/eventEditTextLabelDateTime"
-            android:text="@string/event_vote_yes"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_below="@id/eventEditTextLabelName">
 
-        <ListView
-            android:id="@+id/eventListViewConfirmed"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/eventTextViewLabelConfirmed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:text="@string/event_vote_yes"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            <!--android:layout_alignParentLeft="true"
+            android:layout_below="@+id/eventEditTextLabelName"-->
+            <TextView
+                android:id="@+id/eventTextViewLabelRejected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:text="@string/event_vote_no"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            <!--android:layout_alignParentRight="true"
+            android:layout_below="@+id/eventEditTextLabelDateTime"-->
+        </LinearLayout>
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/eventTextViewLabelConfirmed" />
+            android:layout_below="@id/listLabels">
 
 
-        <TextView
-            android:id="@+id/eventTextViewLabelRejected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/eventEditTextLabelName"
-            android:text="@string/event_vote_no"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            <ListView
+                android:id="@+id/eventListViewConfirmed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:nestedScrollingEnabled="true" />
+            <!--
+                        android:layout_alignParentLeft="true"
+                        android:layout_below="@+id/eventTextViewLabelConfirmed"-->
 
+            <!--android:layout_alignParentRight="true"-->
+            <ListView
+                android:id="@+id/eventListViewRejected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:nestedScrollingEnabled="true" />
 
-        <ListView
-            android:id="@+id/eventListViewRejected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/eventTextViewLabelRejected" />
+            <!--android:layout_alignRight="@+id/eventListViewConfirmed"
+            android:layout_below="@id/eventTextViewLabelRejected"-->
 
+        </LinearLayout>
         <!--<TextView-->
         <!--android:id="@+id/eventTextViewLabelAnswerMissing"-->
         <!--android:layout_width="wrap_content"-->

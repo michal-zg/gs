@@ -1,11 +1,9 @@
 package pl.jw.android.gamescheduler.rest;
 
-import pl.jw.android.gamescheduler.data.Event;
-import pl.jw.android.gamescheduler.data.Notification;
-import pl.jw.android.gamescheduler.data.User;
-
 import java.util.List;
 
+import pl.jw.android.gamescheduler.data.Event;
+import pl.jw.android.gamescheduler.data.Notification;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -26,10 +24,10 @@ public interface RestApi {
 
 
     @POST("events/{eventId}/account/{userName}")
-    Observable<User> confirm(@Path("eventId") String eventId, @Path("userName") String userName);
+    Observable<Event> confirm(@Path("eventId") String eventId, @Path("userName") String userName);
 
     @DELETE("events/{eventId}/account/{userName}")
-    Observable<User> reject(@Path("eventId") String eventId, @Path("userName") String userName);
+    Observable<Event> reject(@Path("eventId") String eventId, @Path("userName") String userName);
 
     @GET("notifications/last")
     Observable<Notification> getLastNotification();

@@ -3,6 +3,7 @@ package pl.jw.android.gamescheduler;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -24,6 +25,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import pl.jw.android.gamescheduler.data.Event;
 import pl.jw.android.gamescheduler.data.Notification;
+import pl.jw.android.gamescheduler.util.ArrayAdapterItemWrapper;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -33,24 +35,25 @@ public class MainActivity extends AppCompatActivity {
 //    @Bind({ R.id.title, R.id.subtitle, R.id.hello })
 //    List<View> headerViews;
 
-    ArrayAdapter adapter;
+     static final Intent INTENT_ROW_DATA_CHANGE = new Intent("INTENT_ROW_DATA_CHANGE");
+
+    private class DataChangeBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.filterEquals(INTENT_ROW_DATA_CHANGE)) {
+                listViewEventsAdapter.notifyDataSetChanged();
+            }
+        }
+    }
 
     @Bind(R.id.listViewEvents)
     ListView listViewEvents;
 
-    ArrayAdapter listViewEventsAdapter;
+    private ArrayAdapter<ArrayAdapterItemWrapper<Event>> listViewEventsAdapter;
     private BroadcastReceiverNotification receiverNotification;
 
-//    @OnItemClick(R.id.listViewEvents) void onItemClick(int position) {
-//        Toast.makeText(this, "You clicked: " + adapter.getItem(position), LENGTH_SHORT).notificationShow();
-//    }
-
-//    @OnItemClick(R.id.fab)
-//    public void onAddClick(int position) {
-//        Intent intent = new Intent(MainActivity.this, AddActivity.class);
-//
-//        MainActivity.this.startActivity(intent);
-//    }
+    private DataChangeBroadcastReceiver receiverRowDataChange = new DataChangeBroadcastReceiver();
 
 
     @Override
@@ -72,12 +75,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listViewEventsAdapter = new ArrayAdapter<Event>(MainActivity.this, R.layout.list_events_row, new ArrayList<Event>()) {
+        listViewEventsAdapter = new ArrayAdapter<ArrayAdapterItemWrapper<Event>>(MainActivity.this, R.layout.list_events_row, new ArrayList<ArrayAdapterItemWrapper<Event>>()) {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                EventItemLayout tli;
 
+                EventItemLayout tli;
                 if (null == convertView) {
                     tli = (EventItemLayout) View.inflate(getContext(), R.layout.list_events_row, null);
                 } else {
@@ -102,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
         receiverNotification = new BroadcastReceiverNotification();
         LocalBroadcastManager.getInstance(this).registerReceiver(receiverNotification, NotificationPullService.getBroadcastIntentFilter());
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverRowDataChange, new IntentFilter(INTENT_ROW_DATA_CHANGE.getAction()));
+
         NotificationPullService.start(this);
 
     }
@@ -110,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverNotification);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverRowDataChange);
     }
 
     @Override
@@ -132,18 +137,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNext(List<Event> listData) {
+
+
                 listViewEventsAdapter.clear();
-                listViewEventsAdapter.addAll(listData);
-
+                listViewEventsAdapter.addAll(ArrayAdapterItemWrapper.wrap(listData));
+                listViewEventsAdapter.notifyDataSetChanged();
             }
         });
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ((ArrayAdapter) listViewEvents.getAdapter()).notifyDataSetChanged();
-            }
-        });
 
         super.onResume();
     }
