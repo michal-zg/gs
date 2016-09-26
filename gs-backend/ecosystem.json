@@ -1,26 +1,27 @@
 {
-  // TODO: uzyc process.yml
   "apps": [
     {
       "name": "rest-api",
-      "script": "main.js",
+      "script": "main.ts",
+      "cwd": "gs-backend"
     }
   ],
   "deploy": {
     "production-aws": {
-      "user": "node",
-      "host": [
-        "52.57.120.91"
-      ],
+      "key": "z:/game-scheduler.pem",
+      "user": "ubuntu",
+      "host": "ec2-52-57-120-91.eu-central-1.compute.amazonaws.com",
       "ref": "origin/master",
       "repo": "https://github.com/michal-zg/gs.git",
-      "path": "/var/lib/game-scheduler/production",
-      "ssh_options": "StrictHostKeyChecking=no",
+      "path": "/home/ubuntu/game-scheduler",
+      "ssh_options": [
+        "StrictHostKeyChecking=no",
+        "PasswordAuthentication=no"
+      ],
       "pre-deploy-local": "echo 'GS deploy start.'",
-      "post-deploy": "npm install && tsc -p tsconfig.json && pm2 startOrRestart ecosystem.json --env production-aws",
+      "post-deploy": "cd /home/ubuntu/game-scheduler/current/gs-backend && sudo npm install && sudo pm2 install typescript && sudo pm2 startOrRestart --interpreter typescript ecosystem.json --env production-aws",
       "env": {
         "NODE_ENV": "production-aws",
-        "port": "3000",
         "mongodb": "mongodb://localhost:27017/game-scheduler"
       }
     }

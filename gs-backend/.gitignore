@@ -1,5 +1,7 @@
 node_modules/*
 
+*.pem
+
 #typescript output
 **/*.js
 **/*.js.map
