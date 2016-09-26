@@ -12,6 +12,6 @@ app.use(bodyParser.urlencoded({"extended": false}));
 app.use('/events/', routerEvent);
 app.use('/notifications/', routerNotification);
 
-var port = process.env.port;
+var port = process.env.rest_port;
 console.log("Listening to PORT " + port);
 app.listen(port);
