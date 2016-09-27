@@ -2,8 +2,7 @@
   "apps": [
     {
       "name": "rest-api",
-      "script": "main.ts",
-      "cwd": "gs-backend"
+      "script": "main.ts"
     }
   ],
   "deploy": {
@@ -19,7 +18,7 @@
         "PasswordAuthentication=no"
       ],
       "pre-deploy-local": "echo 'GS deploy start.'",
-      "post-deploy": "sudo npm install -g typescript && sudo npm install && sudo pm2 install typescript && sudo pm2 startOrRestart --interpreter typescript ecosystem.json --env production-aws",
+      "post-deploy": "sudo cd /home/ubuntu/game-scheduler/current/gs-backend && sudo npm install -g typescript && sudo npm install && sudo pm2 install typescript && sudo pm2 startOrRestart --interpreter typescript ecosystem.json --env production-aws",
       "env": {
         "NODE_ENV": "production-aws",
         "rest_port": "3000",
