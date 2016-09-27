@@ -2,8 +2,7 @@
   "apps": [
     {
       "name": "rest-api",
-      "script": "main.ts",
-      "cwd": "gs-backend"
+      "script": "main.ts"
     }
   ],
   "deploy": {
