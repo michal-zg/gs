@@ -10,13 +10,13 @@ Promise.promisifyAll(require("mongoose"));
 let router = express.Router();
 
 var hash = function (password) {
-    var key = 't23jkascgfdb34';
+    var key = 23;
     let shaObj = new JsSHA('SHA-512', "TEXT");
     shaObj.setHMACKey(key, "TEXT");
     shaObj.update(password);
     var hmac = shaObj.getHMAC("HEX");
 
-    console.log("Password hash: " + hmac, key);
+    console.log("Password hash: " + hmac);
     return hmac;
 };
 
