@@ -15,7 +15,7 @@
       "path": "/home/ubuntu/game-scheduler",
 
       "pre-deploy-local": "echo 'GS deploy start.'",
-      "post-deploy": "cd /home/ubuntu/game-scheduler/current/gs-backend && sudo npm install -g typescript && sudo npm install && tsc && sudo pm2 install typescript && sudo pm2 startOrRestart ecosystem.json --env production",
+      "post-deploy": "cd /home/ubuntu/game-scheduler/current/gs-backend && sudo npm install -g typescript && sudo npm install && tsc  || true && sudo pm2 install typescript && sudo pm2 startOrRestart ecosystem.json --env production",
       "env": {
         "NODE_ENV": "production",
         "rest_port": "3000",
