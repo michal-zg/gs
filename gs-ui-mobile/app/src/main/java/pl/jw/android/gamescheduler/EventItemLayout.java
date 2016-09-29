@@ -59,7 +59,6 @@ public class EventItemLayout extends LinearLayout {
 
         Event data = ArrayAdapterItemWrapper.unwrap(itemWrapper);
 
-        //TODO: organiztor, odswiezanie po zmianie
         editTextLabelName.setText(data.name);
 
         String dateTimeFormatted = DateUtils.formatDateTime(getContext(), data.date.getMillis(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_TIME);

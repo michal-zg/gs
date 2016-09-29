@@ -8,7 +8,13 @@ apps:
       NODE_ENV: development
       rest_port: 3000
       mongodb: 'mongodb://localhost:27017/game-scheduler'
+      main_password_hash: '3ba8b6a33ffc42ee59cfea42ebcd20c4380bded35dd5b95f91d440556cc0b869a05441299010709d7d6223e857b9d94c55351b0bb7d6f954b02364ec000209a7'
+      tls_key_path: './certs/test-key.pem'
+      tls_cert_path: './certs/test-cert.pem'
     env_production:
       NODE_ENV: production
       rest_port: 3000
       mongodb: 'mongodb://localhost:27017/game-scheduler'
+      main_password_hash: '201846fdcff3b72e250f4ad5a3a17ee873c95afe68af16bbcb767dacc6229b187639ebecea625befa04ea2c4d44c47a1ba607641e20911aac7e58ab78962dea4'
+      tls_key_path: '/home/ubuntu/certs/key.pem'
+      tls_cert_path: '/home/ubuntu/certs/cert.pem'

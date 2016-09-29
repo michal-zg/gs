@@ -2,13 +2,12 @@
   "apps": [
     {
       "name": "rest-api",
-      "script": "main.ts",
-      "cwd": "/home/ubuntu/game-scheduler/current/gs-backend"
+      "script": "main.js"
     }
   ],
   "deploy": {
     "production-aws": {
-      "key": "z:/game-scheduler.pem",
+      "key": "./game-scheduler.pem",
       "user": "ubuntu",
       "host": "ec2-52-57-120-91.eu-central-1.compute.amazonaws.com",
       "ref": "origin/master",
@@ -19,11 +18,14 @@
         "PasswordAuthentication=no"
       ],
       "pre-deploy-local": "echo 'GS deploy start.'",
-      "post-deploy": "cd /home/ubuntu/game-scheduler/current/gs-backend && sudo npm install -g typescript && sudo npm install && sudo pm2 install typescript && sudo pm2 startOrRestart --interpreter typescript ecosystem.json --env production-aws",
+      "post-deploy": "cd /home/ubuntu/game-scheduler/current/gs-backend && sudo npm install -g typescript && sudo npm install && tsc && sudo pm2 install typescript && sudo pm2 startOrRestart --interpreter typescript ecosystem.json --env production-aws",
       "env": {
         "NODE_ENV": "production-aws",
         "rest_port": "3000",
-        "mongodb": "mongodb://localhost:27017/game-scheduler"
+        "mongodb": "mongodb://localhost:27017/game-scheduler",
+        "main_password_hash": "201846fdcff3b72e250f4ad5a3a17ee873c95afe68af16bbcb767dacc6229b187639ebecea625befa04ea2c4d44c47a1ba607641e20911aac7e58ab78962dea4",
+        "tls_key_path": "/home/ubuntu/certs/key.pem",
+        "tls_cert_path": "/home/ubuntu/certs/cert.pem"
       }
     }
   }

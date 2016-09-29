@@ -1,6 +1,7 @@
 import mongoose = require("mongoose");
 import IEvent = require("./IEvent");
 import INotification = require("./INotification");
+import IUser = require("./IUser");
 
 const mongoDbUrl = process.env.mongodb;
 mongoose.connect(mongoDbUrl);
@@ -9,6 +10,9 @@ interface IEvenModel extends IEvent, mongoose.Document {
 }
 
 interface INotificationModel extends INotification, mongoose.Document {
+}
+
+interface IUserModel extends IUser, mongoose.Document {
 }
 
 var eventSchema = new mongoose.Schema({
@@ -63,9 +67,29 @@ var notificationSchema = new mongoose.Schema({
     }
 });
 
+var userSchema = new mongoose.Schema({
+    "id": mongoose.Schema.Types.ObjectId,
+    "name": {
+        type: String,
+        required: [true, 'Nazwa użytkownika jest wymagana.'],
+        min: [3, 'Nazwa użytkownika musi być dłuższa niż 3 znaki.']
+    },
+    "alias": {
+        type: String,
+        required: [true, 'Alias użytkownika jest wymagany.'],
+        min: [3, 'Alias użytkownika musi być dłuższy niż 3 znaki.']
+    },
+    "date": {
+        type: Date,
+        default: Date.now
+    }
+});
+
 
 var Event = mongoose.model<IEvenModel>("Event", eventSchema);
 
 var Notification = mongoose.model<INotificationModel>("Notification", notificationSchema);
 
-export = {Event, Notification}
+var User = mongoose.model<IUserModel>("User", userSchema);
+
+export = {Event, Notification, User}

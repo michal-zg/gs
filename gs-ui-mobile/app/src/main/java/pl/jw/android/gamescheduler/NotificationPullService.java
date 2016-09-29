@@ -98,9 +98,8 @@ public class NotificationPullService extends IntentService {
 
                 } finally {
                     //bezwzględnie zapisanie  - zapewnia obs dla sytuacji braku shared preference - pierwszej synchr., gdy są dane
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(NOTIFICATION_LAST_DATETIME, lastNotificationOnBackendDate.toString(ISODateTimeFormat.dateTime()));
-                    editor.commit();
+                    GameSchedulerApplication.getInstance().sharedPreferenceSave(NOTIFICATION_LAST_DATETIME, lastNotificationOnBackendDate.toString(ISODateTimeFormat.dateTime()));
+
                 }
             }
 //        FIXME        chain requestu [pbierajacego notyfikacje

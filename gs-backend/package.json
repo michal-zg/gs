@@ -11,6 +11,7 @@
     "debug": "~2.2.0",
     "express": "^4.14.0",
     "http-status-codes": "^1.0.6",
+    "jssha": "^2.2.0",
     "mongoose": "^4.5.5",
     "pm2": "^2.0.12",
     "typescript": "^2.0.3"
