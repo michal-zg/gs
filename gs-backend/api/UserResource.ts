@@ -1,7 +1,6 @@
 var Promise = require('bluebird');
-import JsSHA = require("jssha");
+var JsSHA = require("jssha");
 import express = require("express");
-import IUser = require("../models/IUser");
 
 var Model = require("./../models/Schema");
 

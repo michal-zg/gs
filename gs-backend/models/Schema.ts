@@ -13,7 +13,7 @@ interface INotificationModel extends INotification, mongoose.Document {
 }
 
 interface IUserModel extends IUser, mongoose.Document {
-}
+} 
 
 var eventSchema = new mongoose.Schema({
     "id": mongoose.Schema.Types.ObjectId,

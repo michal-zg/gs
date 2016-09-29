@@ -6,21 +6,18 @@
     }
   ],
   "deploy": {
-    "production-aws": {
+    "production": {
       "key": "./game-scheduler.pem",
       "user": "ubuntu",
-      "host": "ec2-52-57-120-91.eu-central-1.compute.amazonaws.com",
+      "host": "52.57.120.91",
       "ref": "origin/master",
       "repo": "https://github.com/michal-zg/gs.git",
       "path": "/home/ubuntu/game-scheduler",
-      "ssh_options": [
-        "StrictHostKeyChecking=no",
-        "PasswordAuthentication=no"
-      ],
+
       "pre-deploy-local": "echo 'GS deploy start.'",
-      "post-deploy": "cd /home/ubuntu/game-scheduler/current/gs-backend && sudo npm install -g typescript && sudo npm install && tsc && sudo pm2 install typescript && sudo pm2 startOrRestart --interpreter typescript ecosystem.json --env production-aws",
+      "post-deploy": "cd /home/ubuntu/game-scheduler/current/gs-backend && sudo npm install -g typescript && sudo npm install && tsc && sudo pm2 install typescript && sudo pm2 startOrRestart ecosystem.json --env production",
       "env": {
-        "NODE_ENV": "production-aws",
+        "NODE_ENV": "production",
         "rest_port": "3000",
         "mongodb": "mongodb://localhost:27017/game-scheduler",
         "main_password_hash": "201846fdcff3b72e250f4ad5a3a17ee873c95afe68af16bbcb767dacc6229b187639ebecea625befa04ea2c4d44c47a1ba607641e20911aac7e58ab78962dea4",
