@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(true);
 
             LoginRequest loginRequest = new LoginRequest(GameSchedulerApplication.getInstance().getUserName(), nameAlias, password);
-            GameSchedulerApplication.getInstance().getRestApi().login(loginRequest).subscribeOn(Schedulers.newThread()).
+            GameSchedulerApplication.getInstance().getRestApi(this).login(loginRequest).subscribeOn(Schedulers.newThread()).
                     observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
                 @Override
                 public void call(Boolean success) {

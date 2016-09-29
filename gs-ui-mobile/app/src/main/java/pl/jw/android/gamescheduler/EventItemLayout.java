@@ -96,7 +96,7 @@ public class EventItemLayout extends LinearLayout {
 
         // TODO - ikona czekania
 
-        GameSchedulerApplication.getInstance().getRestApi().confirm(ArrayAdapterItemWrapper.<Event>unwrap(data).id, GameSchedulerApplication.getInstance().getUserName()).subscribeOn(Schedulers.newThread()).
+        GameSchedulerApplication.getInstance().getRestApi(this.getContext()).confirm(ArrayAdapterItemWrapper.<Event>unwrap(data).id, GameSchedulerApplication.getInstance().getUserName()).subscribeOn(Schedulers.newThread()).
                 observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Event>() {
             @Override
             public void onCompleted() {
@@ -126,7 +126,7 @@ public class EventItemLayout extends LinearLayout {
     @OnClick(R.id.eventButtonReject)
     void reject() {
 
-        GameSchedulerApplication.getInstance().getRestApi().reject(ArrayAdapterItemWrapper.<Event>unwrap(data).id, GameSchedulerApplication.getInstance().getUserName()).subscribeOn(Schedulers.newThread()).
+        GameSchedulerApplication.getInstance().getRestApi(this.getContext()).reject(ArrayAdapterItemWrapper.<Event>unwrap(data).id, GameSchedulerApplication.getInstance().getUserName()).subscribeOn(Schedulers.newThread()).
                 observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Event>() {
             @Override
             public void onCompleted() {

@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
 
-        GameSchedulerApplication.getInstance().getRestApi().getEvents().subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Event>>() {
+        GameSchedulerApplication.getInstance().getRestApi(this).getEvents().subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Event>>() {
             @Override
             public void onCompleted() {
                 Snackbar.make(listViewEvents, "Pobrano", Snackbar.LENGTH_LONG)

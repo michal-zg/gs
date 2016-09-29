@@ -26,6 +26,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import pl.jw.android.gamescheduler.rest.RestApi;
 import pl.jw.android.gamescheduler.util.GsonConverters;
+import pl.jw.android.gamescheduler.util.Util;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -63,10 +64,10 @@ public class GameSchedulerApplication extends Application {
         INSTANCE = this;
     }
 
-    public RestApi getRestApi() {
+    public RestApi getRestApi(Context context) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        OkHttpClient client = new OkHttpClient.Builder().sslSocketFactory(Util.getSSLConfig(context).getSocketFactory()).addInterceptor(interceptor).build();
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(DateTime.class, new GsonConverters.DateTimeTypeConverter());

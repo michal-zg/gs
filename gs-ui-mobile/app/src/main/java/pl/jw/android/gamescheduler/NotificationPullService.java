@@ -69,7 +69,7 @@ public class NotificationPullService extends IntentService {
 
 
     private void handle() {
-        GameSchedulerApplication.getInstance().getRestApi().getLastNotification().subscribeOn(Schedulers.immediate()).
+        GameSchedulerApplication.getInstance().getRestApi(this).getLastNotification().subscribeOn(Schedulers.immediate()).
                 observeOn(AndroidSchedulers.mainThread()).filter(new Func1<Notification, Boolean>() {
 
             @Override
@@ -122,7 +122,7 @@ public class NotificationPullService extends IntentService {
 
                 Log.d(TAG, "Notification service - downloading NEW notification from date: " + serverDateTime + ".");
 
-                GameSchedulerApplication.getInstance().getRestApi().getNotificationsFrom(serverDateTime).subscribeOn(Schedulers.newThread()).
+                GameSchedulerApplication.getInstance().getRestApi(NotificationPullService.this).getNotificationsFrom(serverDateTime).subscribeOn(Schedulers.newThread()).
                         observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<List<Notification>>() {
                     @Override
                     public void onCompleted() {

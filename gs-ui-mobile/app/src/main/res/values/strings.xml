@@ -15,10 +15,7 @@
     <string name="prompt_email">Name</string>
     <string name="prompt_password">Password</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
-    <string name="error_login_incorrect">Incorrect name or password</string>
+    <string name="error_login_incorrect">Login failed</string>
     <string name="action_sign_in">Sign in</string>
     <string name="error_field_name_required">This field is required. Min. %c chars long.</string>
 </resources>

@@ -23,7 +23,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pl.jw.android.gamescheduler.data.Event;
-import pl.jw.android.gamescheduler.util.UtilGui;
+import pl.jw.android.gamescheduler.util.Util;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -56,7 +56,7 @@ public class AddActivity extends AppCompatActivity {
 
         Event event = new Event(GameSchedulerApplication.getInstance().getUserName(), name.getText().toString());
 
-        GameSchedulerApplication.getInstance().getRestApi().addEvent(event).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<String>() {
+        GameSchedulerApplication.getInstance().getRestApi(this).addEvent(event).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<String>() {
             @Override
             public void onCompleted() {
                 Snackbar.make(v, "Dodano", Snackbar.LENGTH_LONG).setAction("Dodano", null).show();
@@ -105,7 +105,7 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void selectDateAndTime() {
-        UtilGui.DatePickerFragment.show(getFragmentManager(), new DatePickerDialog.OnDateSetListener() {
+        Util.DatePickerFragment.show(getFragmentManager(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 LocalDate localDate = LocalDate.now().withYear(year).withMonthOfYear(monthOfYear + 1).withDayOfMonth(dayOfMonth);
@@ -120,7 +120,7 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void selectTime() {
-        UtilGui.TimePickerFragment.show(getFragmentManager(), new TimePickerDialog.OnTimeSetListener() {
+        Util.TimePickerFragment.show(getFragmentManager(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
