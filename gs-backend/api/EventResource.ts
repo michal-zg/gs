@@ -95,6 +95,7 @@ router.route("/")
         var event = new Model.Event();
         event.name = req.body.name;
         event.creator = req.body.creator;
+        event.date = req.body.date;
         //dodanie twócy
         event.accountsConfirmed = [];
         event.accountsConfirmed.push(req.body.creator);
