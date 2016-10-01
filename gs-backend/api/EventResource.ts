@@ -1,9 +1,9 @@
 import express = require("express");
 import {Error} from "mongoose";
-import {Response} from "express";
+import {ServerResponse, IncomingMessage} from "http";
+var moment = require('moment');
 
 import Model = require("./../models/Schema");
-import {ServerResponse, IncomingMessage} from "http";
 import IEvent = require("../models/IEvent");
 
 let router = express.Router();
@@ -83,7 +83,10 @@ function handle(req:IncomingMessage, res:ServerResponse, err, data, successHandl
 router.route("/")
     .get((req, res) => {
 
-        Model.Event.find({}, (err, data) => handle(req, res, err, data, (data) => {
+        let yesterdayMidnight = moment(Date.now()).hours(0).minutes(0).seconds(0).milliseconds(0).subtract({days: 1}).toDate();
+        console.log("Events fetched for date: " + yesterdayMidnight);
+
+        Model.Event.find({date: {$gte: yesterdayMidnight}}, (err, data) => handle(req, res, err, data, (data) => {
             return data;
         }));
     })
