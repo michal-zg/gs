@@ -5,6 +5,7 @@ var moment = require('moment');
 
 import Model = require("./../models/Schema");
 import IEvent = require("../models/IEvent");
+import IUser = require("../models/IUser");
 
 let router = express.Router();
 
@@ -86,25 +87,31 @@ router.route("/")
         let yesterdayMidnight = moment(Date.now()).hours(0).minutes(0).seconds(0).milliseconds(0).subtract({days: 1}).toDate();
         console.log("Events fetched for date: " + yesterdayMidnight);
 
-        Model.Event.find({date: {$gte: yesterdayMidnight}}, (err, data) => handle(req, res, err, data, (data) => {
-            return data;
-        }));
+        Model.Event.find({date: {$gte: yesterdayMidnight}})
+            .populate('creator').populate('accountsRejected').populate('accountsConfirmed')
+            .then(data => res.status(200).json(data))
+            .catch(error => res.status(500).json({
+                "error": true,
+                "message": "Error fetching data " + error
+            }));
     })
     .post((req, res)=> {
 
+        let user:IUser = Model.User.findOne({name: req.body.creator}).then(data => data);
+
         var event = new Model.Event();
         event.name = req.body.name;
-        event.creator = req.body.creator;
+        event.creator = user.id;
         event.date = req.body.date;
         //dodanie twócy
         event.accountsConfirmed = [];
-        event.accountsConfirmed.push(req.body.creator);
+        event.accountsConfirmed.push(user.id);
 
         //TODO: zaciagany zabawny losowy tekscik uzasadniajacy - twitter?
         event.save()
             .then(() => res.status(201).json(event._id))
             .catch(error => res.status(500).json({"name": req.params.name}))
-            .then(() => notificationSave(event.creator, event, ' dodał ' + event.name, 'Data: ' + event.date + '\n' + 'Określ się w miarę szybko. Od tego zależy istnienei wszechświata.'));
+            .then(() => notificationSave(user.alias, event, ' dodał ' + event.name, 'Data: ' + event.date + '\n' + 'Określ się w miarę szybko. Od tego zależy istnienei wszechświata.'));
     });
 
 router.route("/:id")
@@ -119,7 +126,6 @@ router.route("/:id")
         Model.Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
 
             if (req.body.name !== undefined) {
-                // case where email needs to be updated.
                 data.name = req.body.name;
             }
 
@@ -163,32 +169,39 @@ router.route("/:id/status")
 router.route("/:id/account/:name")
     .delete(function (req, res) {
 
+        let user:IUser = Model.User.findOne({name: req.params.name}).then(data => data);
+
         Model.Event.findById(req.params.id).then(data => {
+
+
             //usunięcie z listy jeśli na niej jest
-            data.accountsRejected = moveBeetweenArrays(req.params.name, data.accountsRejected, data.accountsConfirmed);
+            data.accountsRejected = moveBeetweenArrays(user.id, data.accountsRejected, data.accountsConfirmed);
 
             return data.save();
         }).then(data => {
 
-            notificationSave(req.params.name, data, ' nie przybędzie ' + data.date, req.params.name + ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date);
+            notificationSave(user.alias, data, ' nie przybędzie ' + data.date, req.params.name + ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date);
 
             return data;
-        }).then(data => res.status(200).json(/*{"name": req.params.name}*/data)).catch(error => res.status(400).json({
-            "error": true,
-            "message": "Error fetching data " + error
-        }));
+        }).then(data => res.status(200).json(data))
+            .catch(error => res.status(400).json({
+                "error": true,
+                "message": "Error fetching data " + error
+            }));
 
     })
     .post(function (req, res) {
 
+        let user:IUser = Model.User.findOne({name: req.params.name}).then(data => data);
+
         Model.Event.findById(req.params.id).then(data => {
 
                 if (data != null) {
-                    data.accountsConfirmed = moveBeetweenArrays(req.params.name, data.accountsConfirmed, data.accountsRejected);
+                    data.accountsConfirmed = moveBeetweenArrays(user.id, data.accountsConfirmed, data.accountsRejected);
 
-                    notificationSave(req.params.name, data, ' przybędzie ' + data.date, req.params.name + ' będzie na: ' + data.name + ' dnia: ' + data.date);
+                    notificationSave(user.alias, data, ' przybędzie ' + data.date, user.alias + ' będzie na: ' + data.name + ' dnia: ' + data.date);
 
-                    data.save().then((data) => res.status(201).json(data/*req.params.name*/)).catch(error => res.status(500).json({"name": req.params.name}));
+                    data.save().then((data) => res.status(201).json(data)).catch(error => res.status(500).json({"name": req.params.name}));
                 } else {
                     res.status(404).json({"error": true, "message": "No data with id " + req.params.id});
                 }
