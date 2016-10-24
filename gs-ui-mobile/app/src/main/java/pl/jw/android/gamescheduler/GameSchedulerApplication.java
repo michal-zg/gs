@@ -22,8 +22,12 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import pl.jw.android.gamescheduler.data.User;
 import pl.jw.android.gamescheduler.rest.RestApi;
 import pl.jw.android.gamescheduler.util.GsonConverters;
 import pl.jw.android.gamescheduler.util.Util;
@@ -39,7 +43,7 @@ public class GameSchedulerApplication extends Application {
     public static final String NOTIFICATION_LAST_DATETIME = "NOTIFICATION_LAST_DATETIME";
 
     private static final int NOTIFICATION_ID_EVENT_CHANGED = 75547;
-    private static final String PREFERENCE_USER_ALIAS = "user.alias";
+    private static final String PREFERENCE_USER = "user.logged";
 
     public static String PROPERTY_REST_API_BASE_URL = "backend.baseurl";
 
@@ -67,7 +71,12 @@ public class GameSchedulerApplication extends Application {
     public RestApi getRestApi(Context context) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().sslSocketFactory(Util.getSSLConfig(context).getSocketFactory()).addInterceptor(interceptor).build();
+        OkHttpClient client = new OkHttpClient.Builder().hostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        }).sslSocketFactory(Util.getSSLConfig(context).getSocketFactory()).addInterceptor(interceptor).build();
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(DateTime.class, new GsonConverters.DateTimeTypeConverter());
@@ -122,16 +131,11 @@ public class GameSchedulerApplication extends Application {
     }
 
     public boolean isLoggedIn() {
-        return getSharedPreferences().contains(PREFERENCE_USER_ALIAS);
-    }
-
-    public void saveUserNameAlias(@NonNull String userAlias) {
-        //TODO: save password for http basic
-        sharedPreferenceSave(NOTIFICATION_LAST_DATETIME, userAlias);
+        return getSharedPreferences().contains(PREFERENCE_USER);
     }
 
     public String getUserNameAlias() {
-        return getSharedPreferences().getString(PREFERENCE_USER_ALIAS, "");
+        return getUser().getAlias();
     }
 
     public String getUserName() {
@@ -145,5 +149,14 @@ public class GameSchedulerApplication extends Application {
             Log.i(getClass().getName(), "User name by google account: \"" + account.name + "\"");
         }
         return name;
+    }
+
+    public void saveLoggedInUser(@NonNull User user) {
+        //TODO: save password for http basic
+        sharedPreferenceSave(PREFERENCE_USER, user == null ? null : new Gson().toJson(user));
+    }
+
+    public User getUser() {
+        return new Gson().fromJson(getSharedPreferences().getString(PREFERENCE_USER, ""), User.class);
     }
 }

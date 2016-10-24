@@ -2,6 +2,7 @@ import http = require('http');
 import https = require('https');
 import fs = require('fs');
 import express = require("express");
+import "log-timestamp";
 
 import routerEvent = require("./api/EventResource");
 import routerNotification = require("./api/NotificationResource");

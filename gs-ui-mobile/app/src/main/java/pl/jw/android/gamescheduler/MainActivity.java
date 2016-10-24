@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 //    @Bind({ R.id.title, R.id.subtitle, R.id.hello })
 //    List<View> headerViews;
 
-     static final Intent INTENT_ROW_DATA_CHANGE = new Intent("INTENT_ROW_DATA_CHANGE");
+    static final Intent INTENT_ROW_DATA_CHANGE = new Intent("INTENT_ROW_DATA_CHANGE");
 
     private class DataChangeBroadcastReceiver extends BroadcastReceiver {
 
@@ -164,7 +164,13 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            GameSchedulerApplication.getInstance().saveLoggedInUser(null);
+
+            startActivity(new Intent(this, LoginActivity.class));
+
+            finish();
+
             return true;
         }
 

@@ -14,19 +14,20 @@ public class Event {
     public Event() {
     }
 
-    public Event(String creator, String name) {
+    public Event(User creator, String name, DateTime date) {
         this.creator = creator;
         this.name = name;
+        this.date = date;
     }
 
     @SerializedName("_id")
     public String id;
-    public String creator;
+    public User creator;
     public String name;
     public DateTime date;
 
-    public List<String> accountsRejected;
-    public List<String> accountsConfirmed;
+    public List<User> accountsRejected;
+    public List<User> accountsConfirmed;
 
     public EventStatus status;
 

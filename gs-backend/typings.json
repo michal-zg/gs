@@ -2,8 +2,16 @@
   "globalDependencies": {
     "body-parser": "registry:dt/body-parser#0.0.0+20160619023215",
     "express": "registry:dt/express#4.0.0+20160708185218",
-    "mongodb": "registry:dt/mongodb#2.1.0+20160602142941",
+    "express-serve-static-core": "registry:dt/express-serve-static-core#4.0.0+20161012061536",
     "mongoose": "registry:dt/mongoose#4.5.4+20160721201159",
+    "mongoose-promise": "registry:dt/mongoose-promise#4.5.4+20160822161941",
+    "mpromise": "registry:dt/mpromise#0.5.4+20160316155526",
     "node": "registry:dt/node#6.0.0+20160802155038"
+  },
+  "dependencies": {
+    "bluebird": "registry:npm/bluebird#3.4.1+20160909132857",
+    "express": "registry:npm/express#4.14.0+20160925001530",
+    "mongodb": "registry:npm/mongodb#2.1.0+20160721204323",
+    "serve-static": "registry:npm/serve-static#1.11.1+20160810053450"
   }
 }

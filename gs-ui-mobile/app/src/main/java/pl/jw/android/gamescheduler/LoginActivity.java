@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import pl.jw.android.gamescheduler.data.User;
 import pl.jw.android.gamescheduler.rest.data.LoginRequest;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -48,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
 
         //jeśli kiedykolwiek było udane logowanie - wszystko wiadomo i nie ma sensu pokazywać widoku
         if (GameSchedulerApplication.getInstance().isLoggedIn()) {
-            loginSuccess(GameSchedulerApplication.getInstance().getUserNameAlias());
+            loginSuccess(GameSchedulerApplication.getInstance().getUser());
             return;
         }
 
@@ -109,12 +110,12 @@ public class LoginActivity extends AppCompatActivity {
 
             LoginRequest loginRequest = new LoginRequest(GameSchedulerApplication.getInstance().getUserName(), nameAlias, password);
             GameSchedulerApplication.getInstance().getRestApi(this).login(loginRequest).subscribeOn(Schedulers.newThread()).
-                    observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
+                    observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<User>() {
                 @Override
-                public void call(Boolean success) {
+                public void call(User user) {
 
-                    if (success) {
-                        loginSuccess(nameAlias);
+                    if (user != null) {
+                        loginSuccess(user);
                     } else {
                         loginFailed();
                     }
@@ -137,13 +138,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void loginSuccess(String userAlias) {
-        GameSchedulerApplication.getInstance().saveUserNameAlias(userAlias);
+    private void loginSuccess(User user) {
+        GameSchedulerApplication.getInstance().saveLoggedInUser(user);
 
-        finish();
 
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         LoginActivity.this.startActivity(intent);
+
+        finish();
     }
 
     private void loginFailed() {

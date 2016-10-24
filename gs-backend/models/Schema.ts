@@ -2,6 +2,8 @@ import mongoose = require("mongoose");
 import IEvent = require("./IEvent");
 import INotification = require("./INotification");
 import IUser = require("./IUser");
+import Promise = require("bluebird");
+Promise.promisifyAll(mongoose);
 
 const mongoDbUrl = process.env.mongodb;
 mongoose.connect(mongoDbUrl);
@@ -28,7 +30,7 @@ var userSchema = new mongoose.Schema({
         required: [true, 'Alias użytkownika jest wymagany.'],
         min: [3, 'Alias użytkownika musi być dłuższy niż 3 znaki.']
     },
-    "date": {
+    "creationDate": {
         type: Date,
         default: Date.now
     }

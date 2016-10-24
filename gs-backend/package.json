@@ -12,9 +12,11 @@
     "express": "^4.14.0",
     "http-status-codes": "^1.0.6",
     "jssha": "^2.2.0",
+    "log-timestamp": "^0.1.2",
     "moment": "^2.15.1",
     "mongoose": "^4.5.5",
     "pm2": "^2.0.12",
-    "typescript": "^2.0.3"
+    "typescript": "^2.0.3",
+    "typings": "^1.4.0"
   }
 }

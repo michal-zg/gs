@@ -1,15 +1,16 @@
 <resources>
     <string name="app_name">Planszówki</string>
-    <string name="action_settings">Konfiguracja</string>
+    <string name="action_settings_logout">Wylogowanie</string>
     <string name="event_name_default">planszówki</string>
-    <string name="event_select_date_time">wybierz datę i czas</string>
+    <string name="event_select_date_time_hint">wybierz datę i czas</string>
     <string name="button_cancel">anuluj</string>
     <string name="button_ok">ok</string>
-    <string name="event_name_hint">Nazwa:</string>
+    <string name="event_name_hint">nazwa lub opis</string>
     <string name="event_date_time_label">Data i czas:</string>
     <string name="event_vote_yes">będę</string>
     <string name="event_vote_no">niepasuje</string>
     <string name="title_activity_login">Login for the insiders</string>
+    <string name="event_name_label">Opis:</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Name</string>

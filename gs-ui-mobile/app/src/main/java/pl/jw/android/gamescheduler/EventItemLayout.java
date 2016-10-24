@@ -16,6 +16,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pl.jw.android.gamescheduler.data.Event;
+import pl.jw.android.gamescheduler.data.User;
 import pl.jw.android.gamescheduler.util.ArrayAdapterItemWrapper;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -67,9 +68,9 @@ public class EventItemLayout extends LinearLayout {
         listViewConfirmed.setAdapter(new ArrayAdapter<>(getContext(), R.layout.list_accounts_row, R.id.accountName, data.accountsConfirmed));
         listViewRejected.setAdapter(new ArrayAdapter<>(getContext(), R.layout.list_accounts_row, R.id.accountName, data.accountsRejected));
 
-        String userName = GameSchedulerApplication.getInstance().getUserName();
-        boolean confirmed = data.accountsConfirmed.contains(userName);
-        boolean rejected = data.accountsRejected.contains(userName);
+        User user = GameSchedulerApplication.getInstance().getUser();
+        boolean confirmed = data.accountsConfirmed.contains(user);
+        boolean rejected = data.accountsRejected.contains(user);
 
         //obie opcje jeśli user się jeszcze nie okreśił
         boolean undefined = confirmed == false && rejected == false;
@@ -145,7 +146,8 @@ public class EventItemLayout extends LinearLayout {
 //                        .setContentText("Data rozgrywki: " + data.date);
 //                GameSchedulerApplication.getInstance().notificationShow(EventItemLayout.this.getContext(), noti);
 
-                data.update(modifiedData);LocalBroadcastManager.getInstance(getContext()).sendBroadcast(MainActivity.INTENT_ROW_DATA_CHANGE);
+                data.update(modifiedData);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(MainActivity.INTENT_ROW_DATA_CHANGE);
 
             }
         });

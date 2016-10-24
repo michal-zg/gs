@@ -12,22 +12,28 @@ let router = express.Router();
 router.route("/last")
     .get((req, res) => {
 
-        Model.Notification.findOne({}).//najpóźniejsza data
-        sort({date: -1}).then(data => res.status(200).json( data)).catch(error => res.status(400).json({
-            "error": true,
-            "message": "Error fetching data " + error
-        }));
+        Model.Notification.findOne({})
+            .populate('event')
+            //najpóźniejsza data
+            .sort({date: -1})
+            .then(data => res.status(200).json(data))
+            .catch(error => res.status(400).json({
+                "error": true,
+                "message": "Error fetching data " + error
+            }));
     });
 
 router.route("/:date")
     .get((req, res) => {
 
-        Model.Notification.find({}).where('date').gte(req.params.date).then(data => {
+        Model.Notification.find({}).where('date').gte(req.params.date)
+            .populate('event')
+            .then(data => {
 
-            console.log("Notification fetched for date: " +req.params.date );
+                console.log("Notification fetched for date: " + req.params.date);
 
-            res.status(200).json(data);
-        }).catch(error => res.status(400).json({
+                res.status(200).json(data);
+            }).catch(error => res.status(400).json({
             "error": true,
             "message": "Error fetching data " + error
         }));

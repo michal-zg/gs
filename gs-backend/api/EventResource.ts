@@ -1,11 +1,13 @@
 import express = require("express");
-import {Error} from "mongoose";
-import {ServerResponse, IncomingMessage} from "http";
-var moment = require('moment');
+import moment = require('moment');
 
 import Model = require("./../models/Schema");
 import IEvent = require("../models/IEvent");
 import IUser = require("../models/IUser");
+import res = require("~express/lib/response");
+
+import Promise = require("bluebird");
+Promise.promisifyAll(require("mongoose"));
 
 let router = express.Router();
 
@@ -35,52 +37,6 @@ function moveBeetweenArrays(element:string, arrayToAddTo:string[], arrayToRemove
     return arrayToAddTo;
 }
 
-function handleMongoErrorMessage(res:ServerResponse, err:any, message:string):void {
-    handleMongoError(res, err, message, null);
-}
-
-function handleMongoErrorDataCallback(res:ServerResponse, err:any, responseReturnDataCallback:() => any):void {
-    handleMongoError(res, err, null, responseReturnDataCallback);
-}
-
-function handleMongoError(res:ServerResponse, err:any, message:string, responseReturnDataCallback:() => any):void {
-    let response;
-    let status:number = 200;
-
-    if (err) {
-        let message;
-        status = 400;
-        if (err instanceof Error) {
-            //mongoose validation error
-            message = err;
-            status = 400;
-        } else {
-            message = err;
-        }
-        response = {"error": true, "message": "Error fetching data " + message};
-
-    } else {
-        if (responseReturnDataCallback == null) {
-            response = {"error": false, message: message};
-        } else {
-            response = responseReturnDataCallback();
-        }
-
-    }
-    res.status(status).json(response);
-}
-
-function handle(req:IncomingMessage, res:ServerResponse, err, data, successHandler):void {
-    let response:{};
-    let status:number = 200;
-    if (err) {
-        response = {"error": true, "message": "Error fetching data" + err};
-    } else {
-        response = successHandler(data);
-    }
-    res.status(status).json(response);
-}
-
 router.route("/")
     .get((req, res) => {
 
@@ -97,71 +53,79 @@ router.route("/")
     })
     .post((req, res)=> {
 
-        let user:IUser = Model.User.findOne({name: req.body.creator}).then(data => data);
 
-        var event = new Model.Event();
-        event.name = req.body.name;
-        event.creator = user.id;
-        event.date = req.body.date;
-        //dodanie twócy
-        event.accountsConfirmed = [];
-        event.accountsConfirmed.push(user.id);
+        Model.User.findOne({name: req.body.creator.name})
+            .then(user => {
 
-        //TODO: zaciagany zabawny losowy tekscik uzasadniajacy - twitter?
-        event.save()
-            .then(() => res.status(201).json(event._id))
-            .catch(error => res.status(500).json({"name": req.params.name}))
-            .then(() => notificationSave(user.alias, event, ' dodał ' + event.name, 'Data: ' + event.date + '\n' + 'Określ się w miarę szybko. Od tego zależy istnienei wszechświata.'));
+                    var event = new Model.Event();
+                    event.name = req.body.name;
+                    event.creator = user._id;
+                    event.date = req.body.date;
+                    //dodanie twócy
+                    event.accountsConfirmed = [];
+                    event.accountsConfirmed.push(user._id);
+
+                    //TODO: zaciagany zabawny losowy tekscik uzasadniajacy - twitter?
+                    event.save()
+                        .then(data => {
+                            res.status(201).json(data._id);
+                            return data;
+                        })
+                        .then(data => notificationSave(user.alias, event, ' dodał ' + data.name, 'Data: ' + data.date + '\n' + 'Określ się w miarę szybko. Od tego zależy istnienei wszechświata.'))
+                        .catch(error => res.status(500).json({"name": req.params.name}));
+
+                }
+            ).catch(error => res.status(500).json({
+            "error": true,
+            "message": "Error fetching data " + error
+        }));
     });
 
 router.route("/:id")
     .get((req, res) => {
-
-        Model.Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
-            return {"error": false, "message": data};
-        }));
+        Model.Event.findById(req.params.id)
+            .then(data => res.status(200).json({"error": false, "message": data}))
+            .catch(error => res.status(400).json({error: true, message: "Error fetching data " + error}));
     })
     .put(function (req, res) {
 
-        Model.Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
-
+        Model.Event.findById(req.params.id).then(data => {
             if (req.body.name !== undefined) {
                 data.name = req.body.name;
             }
 
-            data.save((err)=> handleMongoErrorMessage(res, err, 'Event added'));
-
-            return {"error": false, "message": data};
-        }));
+            data.save().then(data => res.status(200).json({"error": false, "message": data}));
+        }).catch(error => res.status(400).json({error: true, message: "Error " + error}));
     });
 
 router.route("/:id/status")
     .get(function (req, res) {
 
-        Model.Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
-            return {"error": false, "status": data.status};
-        }));
+        Model.Event.findById(req.params.id)
+            .then(data => res.status(200).json({"error": false, "status": data.status}))
+            .catch(error => res.status(400).json({error: true, message: "Error fetching data " + error}));
     })
     .put(function (req, res) {
 
-        Model.Event.findById(req.params.id, (err, data) => handle(req, res, err, data, (data) => {
+        Model.Event.findById(req.params.id)
+            .then(data => {
                 var zmianaStatusuDozwolona = req.body.creator !== undefined && data.creator === req.body.creator;
                 var podanyStatus = req.body.status !== undefined;
                 if (zmianaStatusuDozwolona && podanyStatus) {
-
                     data.status = req.body.status;
-                    data.save((err)=> handleMongoErrorMessage(res, err, "Data is updated for " + req.params.id));
-                }
-                else {
+                    data.save().then(data => res.status(200).json({
+                        "error": false,
+                        message: "Data for " + req.params.id + " updated."
+                    }));
+                } else {
                     res.json({
                         "error": true,
                         "message": "Status change is only possible for event creator and requires status to be given."
                     });
                 }
-            }
-            )
-        )
-        ;
+            })
+            .catch(error => res.status(400).json({error: true, message: "Error fetching data " + error}));
+
     })
 ;
 
@@ -169,21 +133,21 @@ router.route("/:id/status")
 router.route("/:id/account/:name")
     .delete(function (req, res) {
 
-        let user:IUser = Model.User.findOne({name: req.params.name}).then(data => data);
+        Model.User.findOne({name: req.params.name}).then(user => {
 
-        Model.Event.findById(req.params.id).then(data => {
+            Model.Event.findById(req.params.id).then(data => {
 
+                //usunięcie z listy jeśli na niej jest
+                data.accountsRejected = moveBeetweenArrays(user.id, data.accountsRejected, data.accountsConfirmed);
 
-            //usunięcie z listy jeśli na niej jest
-            data.accountsRejected = moveBeetweenArrays(user.id, data.accountsRejected, data.accountsConfirmed);
+                return data.save();
+            }).then(data => {
 
-            return data.save();
-        }).then(data => {
+                notificationSave(user.alias, data, ' nie przybędzie ' + data.date, req.params.name + ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date);
 
-            notificationSave(user.alias, data, ' nie przybędzie ' + data.date, req.params.name + ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date);
-
-            return data;
-        }).then(data => res.status(200).json(data))
+                return data;
+            }).then(data => res.status(200).json(data));
+        })
             .catch(error => res.status(400).json({
                 "error": true,
                 "message": "Error fetching data " + error
@@ -192,9 +156,8 @@ router.route("/:id/account/:name")
     })
     .post(function (req, res) {
 
-        let user:IUser = Model.User.findOne({name: req.params.name}).then(data => data);
-
-        Model.Event.findById(req.params.id).then(data => {
+        Model.User.findOne({name: req.params.name}).then(user => {
+            Model.Event.findById(req.params.id).then(data => {
 
                 if (data != null) {
                     data.accountsConfirmed = moveBeetweenArrays(user.id, data.accountsConfirmed, data.accountsRejected);
@@ -205,9 +168,9 @@ router.route("/:id/account/:name")
                 } else {
                     res.status(404).json({"error": true, "message": "No data with id " + req.params.id});
                 }
-
-            }
-        ).catch(error => res.status(400).json({
+                }
+            );
+        }).catch(error => res.status(400).json({
             "error": true,
             "message": "Error fetching data " + error
         }));

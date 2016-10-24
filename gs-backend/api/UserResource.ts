@@ -1,9 +1,9 @@
+import IUser = require("../models/IUser");
 var Promise = require('bluebird');
 var JsSHA = require("jssha");
 import express = require("express");
 
 var Model = require("./../models/Schema");
-
 Promise.promisifyAll(require("mongoose"));
 
 let router = express.Router();
@@ -24,8 +24,7 @@ router.route("/")
 
         var match = process.env.main_password_hash === hash(req.body.password);
         if (match) {
-
-            Model.User.findOne({'name': req.body.userName}).then(data => {
+            Model.User.findOne({name: req.body.userName}).then(data => {
 
                 if (data == null) {
                     data = new Model.User();
@@ -33,14 +32,12 @@ router.route("/")
                 }
                 data.alias = req.body.userNameAlias;
 
-                data.save();
+                data.save().then(user => res.status(200).json(user));
 
             }).catch(error => res.status(403).json({
                 "error": true,
                 "message": "Not authorized"
             }));
-
-            res.status(200).json(true);
 
         } else {
             res.status(401).json({

@@ -20,6 +20,8 @@ public class Notification implements Serializable {
 
     private DateTime date;
 
+    private Event event;
+
     public String getId() {
         return id;
     }
@@ -50,5 +52,13 @@ public class Notification implements Serializable {
 
     public void setDate(DateTime date) {
         this.date = date;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 }

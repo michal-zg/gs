@@ -5,7 +5,7 @@ node_modules/*
 #typescript output
 **/*.js
 **/*.js.map
-typings/*
+typings/**
 
 #mongo
 mongodb/*

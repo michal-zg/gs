@@ -4,6 +4,7 @@ import java.util.List;
 
 import pl.jw.android.gamescheduler.data.Event;
 import pl.jw.android.gamescheduler.data.Notification;
+import pl.jw.android.gamescheduler.data.User;
 import pl.jw.android.gamescheduler.rest.data.LoginRequest;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -37,5 +38,5 @@ public interface RestApi {
     Observable<List<Notification>> getNotificationsFrom(@Path("date") String serverDateTime);
 
     @POST("login")
-    Observable<Boolean> login(@Body LoginRequest data);
+    Observable<User> login(@Body LoginRequest data);
 }
