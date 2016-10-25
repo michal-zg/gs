@@ -37,14 +37,14 @@ function moveBeetweenArrays(element:string, arrayToAddTo:string[], arrayToRemove
     return arrayToAddTo;
 }
 
-router.route("/")
+router.route("/") 
     .get((req, res) => {
 
         let yesterdayMidnight = moment(Date.now()).hours(0).minutes(0).seconds(0).milliseconds(0).subtract({days: 1}).toDate();
         console.log("Events fetched for date: " + yesterdayMidnight);
 
         Model.Event.find({date: {$gte: yesterdayMidnight}})
-            .populate('creator').populate('accountsRejected').populate('accountsConfirmed')
+            .populate('creator accountsRejected accountsConfirmed')
             .then(data => res.status(200).json(data))
             .catch(error => res.status(500).json({
                 "error": true,
@@ -84,12 +84,15 @@ router.route("/")
 router.route("/:id")
     .get((req, res) => {
         Model.Event.findById(req.params.id)
+            .populate('creator accountsRejected accountsConfirmed')
             .then(data => res.status(200).json({"error": false, "message": data}))
             .catch(error => res.status(400).json({error: true, message: "Error fetching data " + error}));
     })
     .put(function (req, res) {
 
-        Model.Event.findById(req.params.id).then(data => {
+        Model.Event.findById(req.params.id)
+            .populate('creator accountsRejected accountsConfirmed')
+            .then(data => {
             if (req.body.name !== undefined) {
                 data.name = req.body.name;
             }
@@ -102,12 +105,14 @@ router.route("/:id/status")
     .get(function (req, res) {
 
         Model.Event.findById(req.params.id)
+            .populate('creator accountsRejected accountsConfirmed')
             .then(data => res.status(200).json({"error": false, "status": data.status}))
             .catch(error => res.status(400).json({error: true, message: "Error fetching data " + error}));
     })
     .put(function (req, res) {
 
         Model.Event.findById(req.params.id)
+            .populate('creator accountsRejected accountsConfirmed')
             .then(data => {
                 var zmianaStatusuDozwolona = req.body.creator !== undefined && data.creator === req.body.creator;
                 var podanyStatus = req.body.status !== undefined;
@@ -135,7 +140,9 @@ router.route("/:id/account/:name")
 
         Model.User.findOne({name: req.params.name}).then(user => {
 
-            Model.Event.findById(req.params.id).then(data => {
+            Model.Event.findById(req.params.id)
+                .populate('creator accountsRejected accountsConfirmed')
+                .then(data => {
 
                 //usunięcie z listy jeśli na niej jest
                 data.accountsRejected = moveBeetweenArrays(user.id, data.accountsRejected, data.accountsConfirmed);
@@ -157,7 +164,9 @@ router.route("/:id/account/:name")
     .post(function (req, res) {
 
         Model.User.findOne({name: req.params.name}).then(user => {
-            Model.Event.findById(req.params.id).then(data => {
+            Model.Event.findById(req.params.id)
+                .populate('creator accountsRejected accountsConfirmed')
+                .then(data => {
 
                 if (data != null) {
                     data.accountsConfirmed = moveBeetweenArrays(user.id, data.accountsConfirmed, data.accountsRejected);

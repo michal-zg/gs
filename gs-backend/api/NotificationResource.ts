@@ -13,7 +13,10 @@ router.route("/last")
     .get((req, res) => {
 
         Model.Notification.findOne({})
-            .populate('event')
+            .populate({
+                path: 'event',
+                populate: { path: 'creator accountsRejected accountsConfirmed'}
+            })
             //najpóźniejsza data
             .sort({date: -1})
             .then(data => res.status(200).json(data))
@@ -27,7 +30,10 @@ router.route("/:date")
     .get((req, res) => {
 
         Model.Notification.find({}).where('date').gte(req.params.date)
-            .populate('event')
+            .populate({
+                path: 'event',
+                populate: { path: 'creator accountsRejected accountsConfirmed'}
+            })
             .then(data => {
 
                 console.log("Notification fetched for date: " + req.params.date);

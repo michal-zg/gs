@@ -22,6 +22,8 @@ var hash = function (password) {
 router.route("/")
     .post((req, res) => {
 
+        console.log("Login attempt");
+
         var match = process.env.main_password_hash === hash(req.body.password);
         if (match) {
             Model.User.findOne({name: req.body.userName}).then(data => {
@@ -29,6 +31,9 @@ router.route("/")
                 if (data == null) {
                     data = new Model.User();
                     data.name = req.body.userName;
+                    console.log(`User ${data.name} added`);
+                }else{
+                    console.log(`User ${data.name} updated`);
                 }
                 data.alias = req.body.userNameAlias;
 

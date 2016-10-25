@@ -1,11 +1,12 @@
+import IUser = require("./IUser");
 enum EventStatus {'new', 'canceled'}
 interface IEvent {
     id:string;
-    creator:string;
+    creator:IUser;
     name:string;
     date:Date;
-    accountsRejected:string[];
-    accountsConfirmed:string[];
+    accountsRejected:IUser[];
+    accountsConfirmed:IUser[];
     status:EventStatus;
 }
 export = IEvent ;
