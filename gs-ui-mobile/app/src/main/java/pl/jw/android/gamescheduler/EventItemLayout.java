@@ -6,11 +6,14 @@ import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -65,8 +68,8 @@ public class EventItemLayout extends LinearLayout {
         String dateTimeFormatted = DateUtils.formatDateTime(getContext(), data.date.getMillis(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_TIME);
         editTextLabelDateTime.setText(dateTimeFormatted);
 
-        listViewConfirmed.setAdapter(new ArrayAdapter<>(getContext(), R.layout.list_accounts_row, R.id.accountName, data.accountsConfirmed));
-        listViewRejected.setAdapter(new ArrayAdapter<>(getContext(), R.layout.list_accounts_row, R.id.accountName, data.accountsRejected));
+        listViewConfirmed.setAdapter(new UserArrayAdapter(data.accountsConfirmed));
+        listViewRejected.setAdapter(new UserArrayAdapter(data.accountsRejected));
 
         User user = GameSchedulerApplication.getInstance().getUser();
         boolean confirmed = data.accountsConfirmed.contains(user);
@@ -97,8 +100,11 @@ public class EventItemLayout extends LinearLayout {
 
         // TODO - ikona czekania
 
-        GameSchedulerApplication.getInstance().getRestApi(this.getContext()).confirm(ArrayAdapterItemWrapper.<Event>unwrap(data).id, GameSchedulerApplication.getInstance().getUserName()).subscribeOn(Schedulers.newThread()).
-                observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Event>() {
+        String id = ArrayAdapterItemWrapper.<Event>unwrap(data).id;
+        GameSchedulerApplication.getInstance()
+                .getRestApi(this.getContext()).confirm(id, GameSchedulerApplication.getInstance().getUserName())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Event>() {
             @Override
             public void onCompleted() {
 
@@ -111,11 +117,6 @@ public class EventItemLayout extends LinearLayout {
 
             @Override
             public void onNext(Event modifiedData) {
-//                Notification.Builder noti = new Notification.Builder(EventItemLayout.this.getContext())
-//                        .setContentTitle("Potwierdziłeś obecność")
-//                        .setContentText("Data rozgrywki: " + data.date);
-//                GameSchedulerApplication.getInstance().notificationShow(EventItemLayout.this.getContext(), noti);
-
 
                 data.update(modifiedData);
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(MainActivity.INTENT_ROW_DATA_CHANGE);
@@ -127,8 +128,11 @@ public class EventItemLayout extends LinearLayout {
     @OnClick(R.id.eventButtonReject)
     void reject() {
 
-        GameSchedulerApplication.getInstance().getRestApi(this.getContext()).reject(ArrayAdapterItemWrapper.<Event>unwrap(data).id, GameSchedulerApplication.getInstance().getUserName()).subscribeOn(Schedulers.newThread()).
-                observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Event>() {
+        String id = ArrayAdapterItemWrapper.<Event>unwrap(data).id;
+        GameSchedulerApplication.getInstance()
+                .getRestApi(this.getContext()).reject(id, GameSchedulerApplication.getInstance().getUserName())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Event>() {
             @Override
             public void onCompleted() {
 
@@ -141,15 +145,32 @@ public class EventItemLayout extends LinearLayout {
 
             @Override
             public void onNext(Event modifiedData) {
-//                Notification.Builder noti = new Notification.Builder(EventItemLayout.this.getContext())
-//                        .setContentTitle("Anulowałeś obecność")
-//                        .setContentText("Data rozgrywki: " + data.date);
-//                GameSchedulerApplication.getInstance().notificationShow(EventItemLayout.this.getContext(), noti);
 
                 data.update(modifiedData);
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(MainActivity.INTENT_ROW_DATA_CHANGE);
 
             }
         });
+    }
+
+    private class UserArrayAdapter extends ArrayAdapter<User> {
+        public UserArrayAdapter(List<User> data) {
+            super(EventItemLayout.this.getContext(), R.layout.list_accounts_row, R.id.accountName, data);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            UserItemLayout tli;
+            if (null == convertView) {
+                tli = (UserItemLayout) View.inflate(getContext(), R.layout.list_accounts_row, null);
+            } else {
+                tli = (UserItemLayout) convertView;
+            }
+
+            tli.setData(getItem(position));
+
+            return tli;
+        }
     }
 }

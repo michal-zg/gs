@@ -20,17 +20,24 @@ function notificationSave(name:string, event:IEvent, subject:string, message:str
     notification.save();
 }
 
-function moveBeetweenArrays(element:string, arrayToAddTo:string[], arrayToRemoveFrom:string[]):string[] {
+function indexOf(arrayToRemoveFrom:IUser[], element:IUser) {
+    let fromIndex:number = arrayToRemoveFrom.map(u => u.id).indexOf(element.id)
+    return fromIndex;
+}
+
+function moveBeetweenArrays(element: IUser, arrayToAddTo: IUser[], arrayToRemoveFrom: IUser[]): IUser[] {
     if (typeof arrayToAddTo == "undefined"
         || arrayToAddTo == null) {
         arrayToAddTo = [];
     }
 
-    if (arrayToRemoveFrom.indexOf(element) != -1) {
+    var fromIndex = indexOf(arrayToRemoveFrom, element);
+    if (fromIndex != -1) {
         arrayToRemoveFrom.splice(arrayToRemoveFrom.indexOf(element), 1)
     }
 
-    if (arrayToAddTo.indexOf(element) == -1) {
+    var toIndex = indexOf(arrayToAddTo, element);
+    if (toIndex == -1) {
         arrayToAddTo.push(element)
     }
 
@@ -145,7 +152,7 @@ router.route("/:id/account/:name")
                 .then(data => {
 
                 //usunięcie z listy jeśli na niej jest
-                data.accountsRejected = moveBeetweenArrays(user.id, data.accountsRejected, data.accountsConfirmed);
+                data.accountsRejected = moveBeetweenArrays(user, data.accountsRejected, data.accountsConfirmed);
 
                 return data.save();
             }).then(data => {
@@ -169,7 +176,7 @@ router.route("/:id/account/:name")
                 .then(data => {
 
                 if (data != null) {
-                    data.accountsConfirmed = moveBeetweenArrays(user.id, data.accountsConfirmed, data.accountsRejected);
+                    data.accountsConfirmed = moveBeetweenArrays(user, data.accountsConfirmed, data.accountsRejected);
 
                     notificationSave(user.alias, data, ' przybędzie ' + data.date, user.alias + ' będzie na: ' + data.name + ' dnia: ' + data.date);
 
