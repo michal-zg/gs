@@ -106,7 +106,7 @@ public class GameSchedulerApplication extends Application {
     public void notificationShow(Context context, Notification.Builder noti) {
 
         noti.setSmallIcon(R.drawable.ic_airline_seat_recline_extra)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.game_of_thrones_board))
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_notification))
                 .setPriority(android.app.Notification.PRIORITY_MAX);
 
 

@@ -21,11 +21,11 @@ function notificationSave(name:string, event:IEvent, subject:string, message:str
 }
 
 function indexOf(arrayToRemoveFrom:IUser[], element:IUser) {
-    let fromIndex:number = arrayToRemoveFrom.map(u => u.id).indexOf(element.id)
+    let fromIndex:number = arrayToRemoveFrom.map(u => u.id).indexOf(element.id);
     return fromIndex;
 }
 
-function moveBeetweenArrays(element: IUser, arrayToAddTo: IUser[], arrayToRemoveFrom: IUser[]): IUser[] {
+function moveBeetweenArrays(element:IUser, arrayToAddTo:IUser[], arrayToRemoveFrom:IUser[]):IUser[] {
     if (typeof arrayToAddTo == "undefined"
         || arrayToAddTo == null) {
         arrayToAddTo = [];
@@ -44,7 +44,7 @@ function moveBeetweenArrays(element: IUser, arrayToAddTo: IUser[], arrayToRemove
     return arrayToAddTo;
 }
 
-router.route("/") 
+router.route("/")
     .get((req, res) => {
 
         let yesterdayMidnight = moment(Date.now()).hours(0).minutes(0).seconds(0).milliseconds(0).subtract({days: 1}).toDate();
@@ -73,14 +73,13 @@ router.route("/")
                     event.accountsConfirmed.push(user._id);
 
                     //TODO: zaciagany zabawny losowy tekscik uzasadniajacy - twitter?
-                    event.save()
+                return event.save()
                         .then(data => {
                             res.status(201).json(data._id);
                             return data;
                         })
                         .then(data => notificationSave(user.alias, event, ' dodał ' + data.name, 'Data: ' + data.date + '\n' + 'Określ się w miarę szybko. Od tego zależy istnienei wszechświata.'))
                         .catch(error => res.status(500).json({"name": req.params.name}));
-
                 }
             ).catch(error => res.status(500).json({
             "error": true,
@@ -100,12 +99,12 @@ router.route("/:id")
         Model.Event.findById(req.params.id)
             .populate('creator accountsRejected accountsConfirmed')
             .then(data => {
-            if (req.body.name !== undefined) {
-                data.name = req.body.name;
-            }
+                if (req.body.name !== undefined) {
+                    data.name = req.body.name;
+                }
 
-            data.save().then(data => res.status(200).json({"error": false, "message": data}));
-        }).catch(error => res.status(400).json({error: true, message: "Error " + error}));
+                data.save().then(data => res.status(200).json({"error": false, "message": data}));
+            }).catch(error => res.status(400).json({error: true, message: "Error " + error}));
     });
 
 router.route("/:id/status")
@@ -145,23 +144,26 @@ router.route("/:id/status")
 router.route("/:id/account/:name")
     .delete(function (req, res) {
 
-        Model.User.findOne({name: req.params.name}).then(user => {
+        Model.User.findOne({name: req.params.name})
+            .then(user => {
 
-            Model.Event.findById(req.params.id)
-                .populate('creator accountsRejected accountsConfirmed')
-                .then(data => {
+                return Model.Event.findById(req.params.id)
+                    .populate('creator accountsRejected accountsConfirmed')
+                    .then(data => {
 
-                //usunięcie z listy jeśli na niej jest
-                data.accountsRejected = moveBeetweenArrays(user, data.accountsRejected, data.accountsConfirmed);
+                        //usunięcie z listy jeśli na niej jest
+                        data.accountsRejected = moveBeetweenArrays(user, data.accountsRejected, data.accountsConfirmed);
 
-                return data.save();
-            }).then(data => {
+                        return data.save();
+                    })
+                    .then(data => {
 
-                notificationSave(user.alias, data, ' nie przybędzie ' + data.date, req.params.name + ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date);
+                        notificationSave(user.alias, data, ' nie przybędzie ' + data.date, req.params.name + ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date);
 
-                return data;
-            }).then(data => res.status(200).json(data));
-        })
+                        return data;
+                    })
+                    .then(data => res.status(200).json(data))
+            })
             .catch(error => res.status(400).json({
                 "error": true,
                 "message": "Error fetching data " + error
@@ -171,21 +173,21 @@ router.route("/:id/account/:name")
     .post(function (req, res) {
 
         Model.User.findOne({name: req.params.name}).then(user => {
-            Model.Event.findById(req.params.id)
+            return Model.Event.findById(req.params.id)
                 .populate('creator accountsRejected accountsConfirmed')
                 .then(data => {
 
-                if (data != null) {
-                    data.accountsConfirmed = moveBeetweenArrays(user, data.accountsConfirmed, data.accountsRejected);
+                        if (data != null) {
+                            data.accountsConfirmed = moveBeetweenArrays(user, data.accountsConfirmed, data.accountsRejected);
 
-                    notificationSave(user.alias, data, ' przybędzie ' + data.date, user.alias + ' będzie na: ' + data.name + ' dnia: ' + data.date);
+                            notificationSave(user.alias, data, ' przybędzie ' + data.date, user.alias + ' będzie na: ' + data.name + ' dnia: ' + data.date);
 
-                    data.save().then((data) => res.status(201).json(data)).catch(error => res.status(500).json({"name": req.params.name}));
-                } else {
-                    res.status(404).json({"error": true, "message": "No data with id " + req.params.id});
-                }
-                }
-            );
+                            data.save().then((data) => res.status(201).json(data)).catch(error => res.status(500).json({"name": req.params.name}));
+                        } else {
+                            res.status(404).json({"error": true, "message": "No data with id " + req.params.id});
+                        }
+                    }
+                );
         }).catch(error => res.status(400).json({
             "error": true,
             "message": "Error fetching data " + error

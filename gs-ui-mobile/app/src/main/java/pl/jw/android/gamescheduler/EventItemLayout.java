@@ -76,11 +76,11 @@ public class EventItemLayout extends LinearLayout {
         boolean rejected = data.accountsRejected.contains(user);
 
         //obie opcje jeśli user się jeszcze nie okreśił
-        boolean undefined = confirmed == false && rejected == false;
+        boolean defined = confirmed || rejected;
 
         //jeśli się określił - dostępna jedynie opcja pozwalająca zmienić zdanie
-        int buttonConfirmVisibility = undefined || confirmed ? View.INVISIBLE : View.VISIBLE;
-        int buttonRejectVisibility = undefined || rejected ? View.INVISIBLE : View.VISIBLE;
+        int buttonConfirmVisibility = defined && confirmed ? View.INVISIBLE : View.VISIBLE;
+        int buttonRejectVisibility = defined && rejected ? View.INVISIBLE : View.VISIBLE;
 
         buttonConfirm.setVisibility(buttonConfirmVisibility);
         buttonReject.setVisibility(buttonRejectVisibility);

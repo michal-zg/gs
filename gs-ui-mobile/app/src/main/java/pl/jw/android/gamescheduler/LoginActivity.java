@@ -47,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setTitle(R.string.title_activity_login);
+
         //jeśli kiedykolwiek było udane logowanie - wszystko wiadomo i nie ma sensu pokazywać widoku
         if (GameSchedulerApplication.getInstance().isLoggedIn()) {
             loginSuccess(GameSchedulerApplication.getInstance().getUser());

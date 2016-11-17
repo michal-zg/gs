@@ -20,26 +20,35 @@ var hash = function (password) {
 };
 
 router.route("/")
+    .get((req, res) => {
+        Model.User.find({}).sort({alias: "asc", name: "asc"})
+            .then(data => res.status(200).json(data))
+            .catch(error => res.status(403).json({
+                "error": true,
+                "message": "Fetch failed"
+            }));
+    })
     .post((req, res) => {
 
         console.log("Login attempt");
 
         var match = process.env.main_password_hash === hash(req.body.password);
         if (match) {
-            Model.User.findOne({name: req.body.userName}).then(data => {
+            Model.User.findOne({name: req.body.userName})
+                .then(data => {
 
-                if (data == null) {
-                    data = new Model.User();
-                    data.name = req.body.userName;
-                    console.log(`User ${data.name} added`);
-                }else{
-                    console.log(`User ${data.name} updated`);
-                }
-                data.alias = req.body.userNameAlias;
+                    if (data == null) {
+                        data = new Model.User();
+                        data.name = req.body.userName;
+                        console.log(`User ${data.name} added`);
+                    } else {
+                        console.log(`User ${data.name} updated`);
+                    }
+                    data.alias = req.body.userNameAlias;
 
-                data.save().then(user => res.status(200).json(user));
+                    data.save().then(user => res.status(200).json(user));
 
-            }).catch(error => res.status(403).json({
+                }).catch(error => res.status(403).json({
                 "error": true,
                 "message": "Not authorized"
             }));
@@ -51,6 +60,7 @@ router.route("/")
             });
         }
 
-    });
+    })
+;
 
 export = router;

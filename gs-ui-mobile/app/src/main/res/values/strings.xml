@@ -9,7 +9,7 @@
     <string name="event_date_time_label">Data i czas:</string>
     <string name="event_vote_yes">będę</string>
     <string name="event_vote_no">niepasuje</string>
-    <string name="title_activity_login">Login for the insiders</string>
+    <string name="title_activity_login">Mysterious login</string>
     <string name="event_name_label">Opis:</string>
 
     <!-- Strings related to login -->
@@ -18,5 +18,5 @@
     <string name="error_field_required">This field is required</string>
     <string name="error_login_incorrect">Login failed</string>
     <string name="action_sign_in">Sign in</string>
-    <string name="error_field_name_required">This field is required. Min. %c chars long.</string>
+    <string name="error_field_name_required">This field is required. Min. %d chars long.</string>
 </resources>
