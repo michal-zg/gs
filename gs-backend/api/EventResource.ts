@@ -6,6 +6,8 @@ import IEvent = require("../models/IEvent");
 import IUser = require("../models/IUser");
 import res = require("~express/lib/response");
 
+import * as commons from "../commons/commons";
+
 import Promise = require("bluebird");
 Promise.promisifyAll(require("mongoose"));
 
@@ -18,30 +20,6 @@ function notificationSave(name:string, event:IEvent, subject:string, message:str
     notification.message = message + '.';
     notification.event = event;
     notification.save();
-}
-
-function indexOf(arrayToRemoveFrom:IUser[], element:IUser) {
-    let fromIndex:number = arrayToRemoveFrom.map(u => u.id).indexOf(element.id);
-    return fromIndex;
-}
-
-function moveBeetweenArrays(element:IUser, arrayToAddTo:IUser[], arrayToRemoveFrom:IUser[]):IUser[] {
-    if (typeof arrayToAddTo == "undefined"
-        || arrayToAddTo == null) {
-        arrayToAddTo = [];
-    }
-
-    var fromIndex = indexOf(arrayToRemoveFrom, element);
-    if (fromIndex != -1) {
-        arrayToRemoveFrom.splice(arrayToRemoveFrom.indexOf(element), 1)
-    }
-
-    var toIndex = indexOf(arrayToAddTo, element);
-    if (toIndex == -1) {
-        arrayToAddTo.push(element)
-    }
-
-    return arrayToAddTo;
 }
 
 router.route("/")
@@ -152,7 +130,7 @@ router.route("/:id/account/:name")
                     .then(data => {
 
                         //usunięcie z listy jeśli na niej jest
-                        data.accountsRejected = moveBeetweenArrays(user, data.accountsRejected, data.accountsConfirmed);
+                        data.accountsRejected = commons.moveBetweenArrays(user, data.accountsRejected, data.accountsConfirmed);
 
                         return data.save();
                     })
@@ -178,7 +156,7 @@ router.route("/:id/account/:name")
                 .then(data => {
 
                         if (data != null) {
-                            data.accountsConfirmed = moveBeetweenArrays(user, data.accountsConfirmed, data.accountsRejected);
+                            data.accountsConfirmed = commons.moveBetweenArrays(user, data.accountsConfirmed, data.accountsRejected);
 
                             notificationSave(user.alias, data, ' przybędzie ' + data.date, user.alias + ' będzie na: ' + data.name + ' dnia: ' + data.date);
 

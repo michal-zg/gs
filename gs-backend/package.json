@@ -1,9 +1,10 @@
 {
   "name": "nodejs",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./main.js"
+    "start": "node ./main.js",
+    "test": "mocha ./test/**.test.js"
   },
   "dependencies": {
     "bluebird": "^3.4.6",
@@ -18,5 +19,9 @@
     "pm2": "^2.0.12",
     "typescript": "^2.0.3",
     "typings": "^1.4.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.1.2",
+    "unit.js": "^2.0.0"
   }
 }
