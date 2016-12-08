@@ -1,15 +1,15 @@
 import express = require("express");
-import moment = require('moment');
-
-import Model = require("./../models/Schema");
-import IEvent = require("../models/IEvent");
-import IUser = require("../models/IUser");
 import res = require("~express/lib/response");
-
-import * as commons from "../commons/commons";
-
+import moment = require('moment');
 import Promise = require("bluebird");
 Promise.promisifyAll(require("mongoose"));
+
+import * as commons from "../commons/commons";
+import * as Model from "./../models/Schema";
+import IEvent = require("../models/IEvent");
+import IUser = require("../models/IUser");
+
+import mongoose = require("mongoose");
 
 let router = express.Router();
 
@@ -132,6 +132,9 @@ router.route("/:id/account/:name")
                         //usunięcie z listy jeśli na niej jest
                         data.accountsRejected = commons.moveBetweenArrays(user, data.accountsRejected, data.accountsConfirmed);
 
+                        console.log("Delete - rejected" + JSON.stringify(data.accountsRejected));
+                        console.log("Delete - confirmed" + JSON.stringify(data.accountsConfirmed));
+
                         return data.save();
                     })
                     .then(data => {
@@ -154,13 +157,21 @@ router.route("/:id/account/:name")
             return Model.Event.findById(req.params.id)
                 .populate('creator accountsRejected accountsConfirmed')
                 .then(data => {
-
                         if (data != null) {
                             data.accountsConfirmed = commons.moveBetweenArrays(user, data.accountsConfirmed, data.accountsRejected);
 
-                            notificationSave(user.alias, data, ' przybędzie ' + data.date, user.alias + ' będzie na: ' + data.name + ' dnia: ' + data.date);
+                            console.log("Add - rejected" + JSON.stringify(data.accountsRejected));
+                            console.log("Add - confirmed" + JSON.stringify(data.accountsConfirmed));
 
-                            data.save().then((data) => res.status(201).json(data)).catch(error => res.status(500).json({"name": req.params.name}));
+                            data.save().then(data => {
+
+                                console.log("Add after - rejected" + JSON.stringify(data.accountsRejected));
+                                console.log("Add after - confirmed" + JSON.stringify(data.accountsConfirmed));
+
+                                notificationSave(user.alias, data, ' przybędzie ' + data.date, user.alias + ' będzie na: ' + data.name + ' dnia: ' + data.date);
+                                res.status(201).json(data);
+                            }).catch(error => res.status(500).json({"name": req.params.name}));
+
                         } else {
                             res.status(404).json({"error": true, "message": "No data with id " + req.params.id});
                         }

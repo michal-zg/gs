@@ -94,4 +94,4 @@ var Notification = mongoose.model<INotificationModel>("Notification", notificati
 
 var User = mongoose.model<IUserModel>(USER_MODEL_NAME, userSchema);
 
-export = {Event, Notification, User}
+export {Event, Notification, User, IEvenModel};
