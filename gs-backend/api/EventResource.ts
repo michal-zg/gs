@@ -129,15 +129,19 @@ router.route("/:id/account/:name")
                     .populate('creator accountsRejected accountsConfirmed')
                     .then(data => {
 
+                        console.log("Delete - rejected" + JSON.stringify(data.accountsRejected));
+                        console.log("Delete - confirmed" + JSON.stringify(data.accountsConfirmed));
+
                         //usunięcie z listy jeśli na niej jest
                         data.accountsRejected = commons.moveBetweenArrays(user, data.accountsRejected, data.accountsConfirmed);
 
-                        console.log("Delete - rejected" + JSON.stringify(data.accountsRejected));
-                        console.log("Delete - confirmed" + JSON.stringify(data.accountsConfirmed));
 
                         return data.save();
                     })
                     .then(data => {
+
+                        console.log("Delete after - rejected" + JSON.stringify(data.accountsRejected));
+                        console.log("Delete after - confirmed" + JSON.stringify(data.accountsConfirmed));
 
                         notificationSave(user.alias, data, ' nie przybędzie ' + data.date, req.params.name + ' z jakiegoś powodu wycofał się z ' + data.name + ' ' + data.date);
 
@@ -158,10 +162,10 @@ router.route("/:id/account/:name")
                 .populate('creator accountsRejected accountsConfirmed')
                 .then(data => {
                         if (data != null) {
-                            data.accountsConfirmed = commons.moveBetweenArrays(user, data.accountsConfirmed, data.accountsRejected);
-
                             console.log("Add - rejected" + JSON.stringify(data.accountsRejected));
                             console.log("Add - confirmed" + JSON.stringify(data.accountsConfirmed));
+
+                            data.accountsConfirmed = commons.moveBetweenArrays(user, data.accountsConfirmed, data.accountsRejected);
 
                             data.save().then(data => {
 
